@@ -48,7 +48,11 @@ set(SOURCE_FILES
     prefdefaultslayout.cpp
     prefgenerallayout.cpp
     propertieslayout.cpp
+    matlabconnector.cpp
 )
+
+INCLUDE_DIRECTORIES(${MATLAB_INCLUDE_DIR})
+# add_executable(neuroscope matlabconnector.cpp)
 
 # windows resources
 if(WIN32)
@@ -94,9 +98,12 @@ else()
     add_executable(neuroscope WIN32 ${SOURCE_FILES})
 endif()
 
+
+
 ################################################################################
 # Linker config
 ################################################################################
+target_link_libraries(neuroscope ${MATLAB_LIBRARIES})
 target_link_libraries(neuroscope neurosuite)
 
 if(WITH_QT4)

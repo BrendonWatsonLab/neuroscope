@@ -90,6 +90,20 @@ if(WITH_CEREBUS)
 endif(WITH_CEREBUS)
 
 ################################################################################
+# MATLAB SDK config
+################################################################################
+find_package(Matlab REQUIRED)
+
+IF(MATLAB_FOUND)
+    message(STATUS "MATLAB Found, MATLAB MEX will be compiled.")
+    INCLUDE_DIRECTORIES(${MATLAB_INCLUDE_DIR})
+    #add_subdirectory(src)
+ELSE(MATLAB_FOUND)
+    MESSAGE("MATLAB not found...nothing will be built.")
+ENDIF(MATLAB_FOUND)
+
+
+################################################################################
 # .app bundle specific settings
 ################################################################################
 if(APPBUNDLE)
