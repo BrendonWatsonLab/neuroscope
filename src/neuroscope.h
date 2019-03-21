@@ -427,6 +427,10 @@ private Q_SLOTS:
     * for which the traces are going to be displayed.*/
     void slotSelectTime();
 
+    /**Chooses the selection time tool, enabling the user to select a time frame (subset of the currently shown)
+    * which Matlab will be commanded to seek to.*/
+    void slotSeekVideoToTime();
+
     /**Chooses the tool to select an event, enabling the user to select an event in order to move or delete it.*/
     void slotSelectEvent();
 
@@ -763,6 +767,7 @@ private:
     QAction* mSelectTool;
     QAction* mMeasureTool;
     QAction* mTimeTool;
+    QAction* mSeekVideoToTimeTool;
     QAction* mEventTool;
     QAction* mDrawTimeLine;
     QAction* mPage;

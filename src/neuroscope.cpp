@@ -56,6 +56,9 @@
 #include "eventsprovider.h"
 #include "qhelpviewer.h"
 
+// MATLAB
+#include "matlabconnector.h"
+
 
 NeuroscopeApp::NeuroscopeApp()
     :QMainWindow(0)
@@ -276,6 +279,11 @@ void NeuroscopeApp::initActions()
     mTimeTool->setIcon(QIcon(":/icons/time_tool"));
     mTimeTool->setShortcut(Qt::Key_T);
     connect(mTimeTool,SIGNAL(triggered()), this,SLOT(slotSelectTime()));
+
+    mSeekVideoToTimeTool = toolMenu->addAction(tr("Seek Video to Time"));
+    mSeekVideoToTimeTool->setIcon(QIcon(":/icons/time_tool"));
+    mSeekVideoToTimeTool->setShortcut(Qt::Key_G);
+    connect(mSeekVideoToTimeTool,SIGNAL(triggered()), this,SLOT(slotSeekVideoToTime()));
 
     mEventTool = toolMenu->addAction(tr("Select Event"));
     mEventTool->setIcon(QIcon(":/icons/event_tool"));
@@ -643,6 +651,7 @@ void NeuroscopeApp::initActions()
     mToolBar->addAction(addEventToolBarAction);
     mToolBar->addAction(mMeasureTool);
     mToolBar->addAction(mTimeTool);
+    mToolBar->addAction(mSeekVideoToTimeTool);
     addToolBar(Qt::LeftToolBarArea, mToolBar);
 
     mChannelToolBar = new QToolBar(tr("Channels Actions"));
@@ -1743,7 +1752,7 @@ void NeuroscopeApp::slotSelectEvent(){
 }
 
 void NeuroscopeApp::slotDrawTimeLine(){
-    slotStatusMsg(tr("Drawing a line..."));
+    slotStatusMsg(tr("Drawing Timeline..."));
     NeuroscopeView* view = activeView();
     view->setMode(TraceView::DRAW_LINE,true);
 
@@ -1751,6 +1760,20 @@ void NeuroscopeApp::slotDrawTimeLine(){
 
     slotStatusMsg(tr("Ready."));
 }
+
+void NeuroscopeApp::slotSeekVideoToTime(){
+    slotStatusMsg(tr("Trying to seek the video..."));
+    NeuroscopeView* view = activeView();
+    view->setMode(TraceView::DRAW_LINE,true);
+
+    select = false;
+
+    matlabConnectorFunctions::seekToTime(1337.023);
+    //seekToTime(1337.023);
+
+    slotStatusMsg(tr("Ready."));
+}
+
 
 NeuroscopeView* NeuroscopeApp::activeView(){
 
@@ -3477,6 +3500,7 @@ void NeuroscopeApp::slotStateChanged(const QString& state)
         mMeasureTool->setEnabled(false);
         mSelectTool->setEnabled(false);
         mTimeTool->setEnabled(false);
+        mSeekVideoToTimeTool->setEnabled(false);
         mEventTool->setEnabled(false);
         addEventToolBarAction->setEnabled(false);
         mResetSelectedChannelAmplitudes->setEnabled(false);
@@ -3541,6 +3565,7 @@ void NeuroscopeApp::slotStateChanged(const QString& state)
         mMeasureTool->setEnabled(true);
         mSelectTool->setEnabled(true);
         mTimeTool->setEnabled(true);
+        mSeekVideoToTimeTool->setEnabled(true);
         mResetSelectedChannelAmplitudes->setEnabled(true);
         mColorSpikeGroups->setEnabled(true);
         mIncreaseSelectedChannelAmplitude->setEnabled(true);

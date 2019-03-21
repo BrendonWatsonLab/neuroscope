@@ -28,6 +28,11 @@
 
 //Application specific include files
 #include "neuroscope.h"
+
+// MATLAB
+#include "matlabconnector.h"
+
+
 int main(int argc, char *argv[])
 {    
     // QApplication::setGraphicsSystem() was removed from Qt5
