@@ -25,6 +25,7 @@
 #include <QDir>
 #include <QString>
 #include <QApplication>
+#include <QtWidgets/QDesktopWidget>
 
 //Application specific include files
 #include "neuroscope.h"
@@ -42,6 +43,7 @@ int main(int argc, char *argv[])
     QApplication::setOrganizationName("neurosuite");
     QApplication::setOrganizationDomain("neurosuite.github.io");
     QApplication::setApplicationName("neuroscope");
+    QGuiApplication::setApplicationDisplayName(QCoreApplication::applicationName());
 
     QApplication app(argc, argv);
     QString file;

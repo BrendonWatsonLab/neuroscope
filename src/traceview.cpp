@@ -241,7 +241,7 @@ void TraceView::changeCursor()
 
 }
 
-void TraceView::dataAvailable(Array<dataType>& data,QObject* initiator)
+void TraceView::dataAvailable(Array<dataType>& data, QObject* initiator)
 {
     //If another widget was the initiator of the request, ignore the data.
     if (initiator != this)
