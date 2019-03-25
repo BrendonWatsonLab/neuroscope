@@ -49,6 +49,7 @@ class ItemPalette;
 class QRecentFileAction;
 class QExtendTabWidget;
 class QSplitter;
+class VideoPlayer;
 
 /**
   * The Neuroscope main window and central class. It sets up the main
@@ -437,6 +438,9 @@ private Q_SLOTS:
     /** Executes the preferences dialog.*/
     void executePreferencesDlg();
 
+    /** Displays the video player.*/
+    void displayVideoPlayer();
+
     /** Updates the widgets so that new user settings take effect.*/
     void applyPreferences();
 
@@ -734,6 +738,9 @@ private:
 
     /**Settings dialog.*/
     PrefDialog* prefDialog;
+
+    /**Video player*/
+    VideoPlayer* videoPlayer;
 
     //Action and toolbar pointers
     QAction* fileOpenRecent;

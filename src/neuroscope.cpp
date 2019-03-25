@@ -44,6 +44,11 @@
 #include <QProcess>
 #include <QSplitter>
 
+#include <QDesktopWidget>
+
+#include <QTime>
+#include <QDate>
+
 // application specific includes
 #include "neuroscope.h"
 #include "neuroscopedoc.h"
@@ -55,6 +60,7 @@
 #include "itempalette.h"
 #include "eventsprovider.h"
 #include "qhelpviewer.h"
+#include "videoplayer.h"
 
 // MATLAB
 #include "matlabconnector.h"
@@ -78,6 +84,7 @@ NeuroscopeApp::NeuroscopeApp()
     ,initialTimeWindow(0)
     ,undoRedoInprocess(false)
     ,isPositionFileLoaded(false)
+    ,videoPlayer(0L)
 {
     setObjectName("NeuroScope");
     initView();
@@ -723,6 +730,14 @@ void NeuroscopeApp::executePreferencesDlg(){
             applyPreferences();                      // let settings take effect
         }
     }
+}
+
+void NeuroscopeApp::displayVideoPlayer() {
+    if (videoPlayer == 0L) {
+        videoPlayer = new VideoPlayer();
+    }
+    // Set up any settings for the video player
+    // Connect any signals for the video player
 }
 
 void NeuroscopeApp::applyPreferences() {
@@ -1768,8 +1783,51 @@ void NeuroscopeApp::slotSeekVideoToTime(){
 
     select = false;
 
-    matlabConnectorFunctions::seekToTime(1337.023);
-    //seekToTime(1337.023);
+    //VideoPlayer player;
+    videoPlayer = new VideoPlayer();
+    videoPlayer->openFile();
+    const QRect availableGeometry = QApplication::desktop()->availableGeometry(videoPlayer);
+    videoPlayer->resize(availableGeometry.width() / 6, availableGeometry.height() / 4);
+    videoPlayer->show();
+
+
+    // Video File:
+    const QString videoURL = videoPlayer->getUrl().toDisplayString();
+    const QStringList videoFilePathParts = videoURL.split(QDir::separator(), QString::SkipEmptyParts);
+    const QString videoFileName = videoFilePathParts.last();
+    const QStringList videoFileNameComponents = videoFileName.split(QLatin1Char('.'), QString::SkipEmptyParts);
+    const QString videoFileBaseName = videoFileNameComponents.first();
+    QStringList videoFileBaseNameParts = videoFileBaseName.split(QLatin1Char('_'), QString::SkipEmptyParts);
+    // Jasper_20190319_125207822.avi
+    QDate videoFileDate = QDate::fromString(videoFileBaseNameParts[1],"yyyyMMdd");
+    QTime videoFileTime = QTime::fromString(videoFileBaseNameParts[2], "hhmmsszzz");
+
+    // Data File:
+
+    // Perform the diff
+    qlonglong dataRecordingLength = getDocument()->recordingLength();
+    const QString dataURL = getDocument()->url();
+    qInfo(qUtf8Printable(dataURL));
+    QStringList dataFilePathParts = dataURL.split(QDir::separator(), QString::SkipEmptyParts);
+//    if(dataFilePathParts.count() < 2)
+//        return INCORRECT_FILE;
+
+    int parentDirectoryIndex = dataFilePathParts.count() - 2;
+    QString parentDirectoryName = dataFilePathParts[parentDirectoryIndex];
+    QStringList parentDirectoryNameParts = parentDirectoryName.split(QLatin1Char('_'), QString::SkipEmptyParts);
+
+    // Jasper_190319_125141
+    //QString date_string_on_db = parentDirectoryNameParts[1] + "T" + parentDirectoryNameParts[2];
+    QDate dataFileDate = QDate::fromString(parentDirectoryNameParts[1],"yyMMdd");
+    QTime dataFileTime = QTime::fromString(parentDirectoryNameParts[2], "hhmmss");
+
+
+    // Video Lag Time:
+    int dataOffsetToVideo = dataFileTime.msecsTo(videoFileTime);
+    QString printable = QStringLiteral("Offset to video: %1 [msec].").arg(dataOffsetToVideo);
+    qInfo(qUtf8Printable(printable));
+
+    // So we can now get the time to seek to in video from a time in the file.
 
     slotStatusMsg(tr("Ready."));
 }

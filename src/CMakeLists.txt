@@ -48,10 +48,10 @@ set(SOURCE_FILES
     prefdefaultslayout.cpp
     prefgenerallayout.cpp
     propertieslayout.cpp
-    matlabconnector.cpp
+    videoplayer.cpp
 )
 
-INCLUDE_DIRECTORIES(${MATLAB_INCLUDE_DIR})
+# INCLUDE_DIRECTORIES(${MATLAB_INCLUDE_DIR})
 # add_executable(neuroscope matlabconnector.cpp)
 
 # windows resources
@@ -103,13 +103,13 @@ endif()
 ################################################################################
 # Linker config
 ################################################################################
-target_link_libraries(neuroscope ${MATLAB_LIBRARIES})
+#target_link_libraries(neuroscope ${MATLAB_LIBRARIES})
 target_link_libraries(neuroscope neurosuite)
 
 if(WITH_QT4)
     target_link_libraries(neuroscope Qt4::QtGui Qt4::QtXml)
 else()
-    target_link_libraries(neuroscope Qt5::Widgets Qt5::Xml Qt5::PrintSupport)
+    target_link_libraries(neuroscope Qt5::Widgets Qt5::Xml Qt5::PrintSupport Qt5::Multimedia Qt5::MultimediaWidgets)
 endif()
 
 if(WITH_CEREBUS)
