@@ -48,6 +48,7 @@ set(SOURCE_FILES
     prefdefaultslayout.cpp
     prefgenerallayout.cpp
     propertieslayout.cpp
+    DataMovieLinkInfo.cpp
     videoplayer.cpp
 )
 

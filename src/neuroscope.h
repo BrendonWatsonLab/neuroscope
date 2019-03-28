@@ -50,6 +50,7 @@ class QRecentFileAction;
 class QExtendTabWidget;
 class QSplitter;
 class VideoPlayer;
+class DataMovieLinkInfo;
 
 /**
   * The Neuroscope main window and central class. It sets up the main
@@ -189,6 +190,11 @@ public:
    * @return the current background color.
    */
     inline QColor getBackgroundColor()const{return backgroundColor;}
+
+    /**Returns the current data-movie link info.
+   * @return the current data-movie link info.
+   */
+   DataMovieLinkInfo* getDataMovieLinkInfo();
 
     /**Informs the application that a position file has been loaded from the session file.*/
     void positionFileLoaded(){
@@ -741,6 +747,9 @@ private:
 
     /**Video player*/
     VideoPlayer* videoPlayer;
+
+    /**Data-Movie Link Info*/
+    DataMovieLinkInfo* dataMovieLinkInfo;
 
     //Action and toolbar pointers
     QAction* fileOpenRecent;

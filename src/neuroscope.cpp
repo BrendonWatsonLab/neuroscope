@@ -61,6 +61,7 @@
 #include "eventsprovider.h"
 #include "qhelpviewer.h"
 #include "videoplayer.h"
+#include "DataMovieLinkInfo.h"
 
 // MATLAB
 #include "matlabconnector.h"
@@ -1776,6 +1777,10 @@ void NeuroscopeApp::slotDrawTimeLine(){
     slotStatusMsg(tr("Ready."));
 }
 
+DataMovieLinkInfo* NeuroscopeApp::getDataMovieLinkInfo() {
+    return this->dataMovieLinkInfo;
+}
+
 void NeuroscopeApp::slotSeekVideoToTime(){
     slotStatusMsg(tr("Trying to seek the video..."));
     NeuroscopeView* view = activeView();
@@ -1792,38 +1797,42 @@ void NeuroscopeApp::slotSeekVideoToTime(){
 
 
     // Video File:
-    const QString videoURL = videoPlayer->getUrl().toDisplayString();
-    const QStringList videoFilePathParts = videoURL.split(QDir::separator(), QString::SkipEmptyParts);
-    const QString videoFileName = videoFilePathParts.last();
-    const QStringList videoFileNameComponents = videoFileName.split(QLatin1Char('.'), QString::SkipEmptyParts);
-    const QString videoFileBaseName = videoFileNameComponents.first();
-    QStringList videoFileBaseNameParts = videoFileBaseName.split(QLatin1Char('_'), QString::SkipEmptyParts);
-    // Jasper_20190319_125207822.avi
-    QDate videoFileDate = QDate::fromString(videoFileBaseNameParts[1],"yyyyMMdd");
-    QTime videoFileTime = QTime::fromString(videoFileBaseNameParts[2], "hhmmsszzz");
+    const QString videoURL = videoPlayer->getUrl().toDisplayString();    
+//    const QStringList videoFilePathParts = videoURL.split(QDir::separator(), QString::SkipEmptyParts);
+//    const QString videoFileName = videoFilePathParts.last();
+//    const QStringList videoFileNameComponents = videoFileName.split(QLatin1Char('.'), QString::SkipEmptyParts);
+//    const QString videoFileBaseName = videoFileNameComponents.first();
+//    QStringList videoFileBaseNameParts = videoFileBaseName.split(QLatin1Char('_'), QString::SkipEmptyParts);
+//    // Jasper_20190319_125207822.avi
+//    QDate videoFileDate = QDate::fromString(videoFileBaseNameParts[1],"yyyyMMdd");
+//    QTime videoFileTime = QTime::fromString(videoFileBaseNameParts[2], "hhmmsszzz");
 
     // Data File:
 
     // Perform the diff
     qlonglong dataRecordingLength = getDocument()->recordingLength();
     const QString dataURL = getDocument()->url();
-    qInfo(qUtf8Printable(dataURL));
-    QStringList dataFilePathParts = dataURL.split(QDir::separator(), QString::SkipEmptyParts);
-//    if(dataFilePathParts.count() < 2)
-//        return INCORRECT_FILE;
+//    qInfo(qUtf8Printable(dataURL));
+//    QStringList dataFilePathParts = dataURL.split(QDir::separator(), QString::SkipEmptyParts);
+////    if(dataFilePathParts.count() < 2)
+////        return INCORRECT_FILE;
 
-    int parentDirectoryIndex = dataFilePathParts.count() - 2;
-    QString parentDirectoryName = dataFilePathParts[parentDirectoryIndex];
-    QStringList parentDirectoryNameParts = parentDirectoryName.split(QLatin1Char('_'), QString::SkipEmptyParts);
+//    int parentDirectoryIndex = dataFilePathParts.count() - 2;
+//    QString parentDirectoryName = dataFilePathParts[parentDirectoryIndex];
+//    QStringList parentDirectoryNameParts = parentDirectoryName.split(QLatin1Char('_'), QString::SkipEmptyParts);
 
-    // Jasper_190319_125141
-    //QString date_string_on_db = parentDirectoryNameParts[1] + "T" + parentDirectoryNameParts[2];
-    QDate dataFileDate = QDate::fromString(parentDirectoryNameParts[1],"yyMMdd");
-    QTime dataFileTime = QTime::fromString(parentDirectoryNameParts[2], "hhmmss");
+//    // Jasper_190319_125141
+//    //QString date_string_on_db = parentDirectoryNameParts[1] + "T" + parentDirectoryNameParts[2];
+//    QDate dataFileDate = QDate::fromString(parentDirectoryNameParts[1],"yyMMdd");
+//    QTime dataFileTime = QTime::fromString(parentDirectoryNameParts[2], "hhmmss");
+
+    this->dataMovieLinkInfo = new DataMovieLinkInfo(this, videoURL, dataURL);
 
 
     // Video Lag Time:
-    int dataOffsetToVideo = dataFileTime.msecsTo(videoFileTime);
+    //int dataOffsetToVideo = dataFileTime.msecsTo(videoFileTime);
+
+    int dataOffsetToVideo = this->dataMovieLinkInfo->getDataOffsetToVideoMSec();
     QString printable = QStringLiteral("Offset to video: %1 [msec].").arg(dataOffsetToVideo);
     qInfo(qUtf8Printable(printable));
 
