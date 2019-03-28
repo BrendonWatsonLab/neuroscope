@@ -61,9 +61,14 @@ void VideoPlayer::openFile()
     fileDialog.setAcceptMode(QFileDialog::AcceptOpen);
     fileDialog.setWindowTitle(tr("Open Movie"));
     QStringList supportedMimeTypes = m_mediaPlayer->supportedMimeTypes();
-    if (!supportedMimeTypes.isEmpty())
-        fileDialog.setMimeTypeFilters(supportedMimeTypes);
-    fileDialog.setDirectory(QStandardPaths::standardLocations(QStandardPaths::MoviesLocation).value(0, QDir::homePath()));
+//    if (!supportedMimeTypes.isEmpty())
+//        fileDialog.setMimeTypeFilters(supportedMimeTypes);
+
+
+    // Set the default directory to look for the movie in
+    const QString directoryURL = QDir::currentPath();
+    //const QString directoryURL = QStandardPaths::standardLocations(QStandardPaths::MoviesLocation).value(0, QDir::homePath());
+    fileDialog.setDirectory(directoryURL);
     if (fileDialog.exec() == QDialog::Accepted)
         setUrl(fileDialog.selectedUrls().constFirst());
 }
