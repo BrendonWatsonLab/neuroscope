@@ -35,6 +35,10 @@ option(REGENERATE_DOC
        "Enable if you want to regenerate doc need kde4"
        OFF)
 
+option(MATLAB_CONNECTOR
+       "Enable if you want to MATLAB connector support (Unimplemented)"
+       OFF)
+
 if(APPLE)
     option(APPBUNDLE
            "Enable this if you want to produce an .app bundle."
@@ -92,15 +96,18 @@ endif(WITH_CEREBUS)
 ################################################################################
 # MATLAB SDK config
 ################################################################################
-find_package(Matlab REQUIRED)
+if(MATLAB_CONNECTOR)
+    find_package(Matlab REQUIRED)
 
-IF(MATLAB_FOUND)
-    message(STATUS "MATLAB Found, MATLAB MEX will be compiled.")
-    INCLUDE_DIRECTORIES(${MATLAB_INCLUDE_DIR})
-    #add_subdirectory(src)
-ELSE(MATLAB_FOUND)
-    MESSAGE("MATLAB not found...nothing will be built.")
-ENDIF(MATLAB_FOUND)
+    IF(MATLAB_FOUND)
+        message(STATUS "MATLAB Found, MATLAB MEX will be compiled.")
+        INCLUDE_DIRECTORIES(${MATLAB_INCLUDE_DIR})
+        #add_subdirectory(src)
+    ELSE(MATLAB_FOUND)
+        MESSAGE("MATLAB not found...nothing will be built.")
+    ENDIF(MATLAB_FOUND)
+
+ENDIF(MATLAB_CONNECTOR)
 
 
 ################################################################################
