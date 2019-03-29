@@ -7,6 +7,7 @@
 #include <qvideowidget.h>
 #include <qvideosurfaceformat.h>
 #include <QMediaMetaData>
+#include "DataMovieLinkInfo.h"
 
 //currentMediaChanged(const QMediaContent &media)
 
@@ -234,8 +235,9 @@ void VideoPlayer::updatePositionDurationLabel() {
 
     const QString strPosition = QString::number(currPosition); // actual conversion
     const QString strDuration = QString::number(currDuration); // actual conversion
+    const QString formattedComponentsPosition = DataMovieLinkInfo::formatAsComponents(currPosition);
 
-    const QString finalOutputString = strPosition + " / " + strDuration;
+    const QString finalOutputString = strPosition + " / " + strDuration + " (" + formattedComponentsPosition + ")";
     this->m_positionLabel->setText(finalOutputString);
 }
 
