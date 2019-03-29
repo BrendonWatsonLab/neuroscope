@@ -20,6 +20,12 @@ public:
 
     inline qlonglong getDataOffsetToVideoMSec() const { return dataOffsetToVideoMSec; }
 
+    inline qlonglong getDataDuration() const { return this->dataDuration; }
+    inline void setDataDuration(const qlonglong dataDuration) { this->dataDuration = dataDuration; }
+    inline qlonglong getVideoDuration() const { return this->videoDuration; }
+    inline void setVideoDuration(const qlonglong videoDuration) { this->videoDuration = videoDuration; }
+
+
 Q_SIGNALS:
     //TODO: add signals that will handle when either data file or the video are changed.
 

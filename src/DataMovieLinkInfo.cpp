@@ -27,7 +27,6 @@ void DataMovieLinkInfo::parse()
     // Data File:
 
     // Perform the diff
-    //qlonglong dataRecordingLength = getDocument()->recordingLength();
     qInfo(qUtf8Printable(dataFileUrl));
     QStringList dataFilePathParts = dataFileUrl.split(QDir::separator(), QString::SkipEmptyParts);
     int parentDirectoryIndex = dataFilePathParts.count() - 2;

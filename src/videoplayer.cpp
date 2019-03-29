@@ -187,7 +187,6 @@ qint64 VideoPlayer::getPosition()
     return m_mediaPlayer->position();
 }
 
-
 qreal VideoPlayer::getFramesPerSecond() {
     return this->videoFrameRate;
 }

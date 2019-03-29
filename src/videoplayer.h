@@ -27,13 +27,13 @@ public:
     public slots:
         void openFile();
         void play();
+        void setPosition(int position);
 
     private slots:
         void onMediaStatusChanged(QMediaPlayer::MediaStatus status);
         void mediaStateChanged(QMediaPlayer::State state);
         void positionChanged(qint64 position);
         void durationChanged(qint64 duration);
-        void setPosition(int position);
         void handleError();
 
     private:
