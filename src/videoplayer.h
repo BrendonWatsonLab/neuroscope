@@ -21,12 +21,15 @@ public:
         void setUrl(const QUrl &url);
         qint64 getDuration();
         qint64 getPosition();
+        qreal getFramesPerSecond();
+        void getMetaData();
 
     public slots:
         void openFile();
         void play();
 
     private slots:
+        void onMediaStatusChanged(QMediaPlayer::MediaStatus status);
         void mediaStateChanged(QMediaPlayer::State state);
         void positionChanged(qint64 position);
         void durationChanged(qint64 duration);
@@ -38,6 +41,12 @@ public:
         QAbstractButton *m_playButton;
         QSlider *m_positionSlider;
         QLabel *m_errorLabel;
+        QLabel *m_positionLabel;
+        QAbstractButton *m_showPositionInDataFileButton;
+
+        qreal videoFrameRate = 0;
+
+        void updatePositionDurationLabel();
 
 
 };
