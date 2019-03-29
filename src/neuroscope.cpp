@@ -554,6 +554,11 @@ void NeuroscopeApp::initActions()
     mViewStatusBar->setChecked(true);
     connect(mViewStatusBar,SIGNAL(triggered()), this,SLOT(slotViewStatusBar()));
 
+    viewLinkedVideoToolBar = settingsMenu->addAction(tr("Show LinkedVideo Bar"));
+    viewLinkedVideoToolBar->setCheckable(true);
+    viewLinkedVideoToolBar->setChecked(true);
+    connect(viewLinkedVideoToolBar,SIGNAL(triggered()), this,SLOT(slotViewLinkedVideoToolBar()));
+
     settingsMenu->addSeparator();
 
     calibrationBar = settingsMenu->addAction(tr("&Display Calibration"));
@@ -658,7 +663,6 @@ void NeuroscopeApp::initActions()
     mToolBar->addAction(addEventToolBarAction);
     mToolBar->addAction(mMeasureTool);
     mToolBar->addAction(mTimeTool);
-    mToolBar->addAction(mSeekVideoToTimeTool);
     addToolBar(Qt::LeftToolBarArea, mToolBar);
 
     mChannelToolBar = new QToolBar(tr("Channels Actions"));
@@ -684,6 +688,13 @@ void NeuroscopeApp::initActions()
     mClusterToolBar->addAction(mPreviousSpike);
     mClusterToolBar->addAction(mNextSpike);
     addToolBar(Qt::LeftToolBarArea, mClusterToolBar);
+
+
+    mLinkedVideoToolBar = new QToolBar(tr("Linked Video Actions"));
+    mLinkedVideoToolBar->setObjectName("Linked Video Actions");
+    mLinkedVideoToolBar->addAction(mSeekVideoToTimeTool);
+    addToolBar(Qt::RightToolBarArea, mLinkedVideoToolBar);
+
     readSettings();
 
 }
@@ -1674,6 +1685,17 @@ void NeuroscopeApp::slotViewToolBar()
     mToolBar->setVisible(viewToolBar->isChecked());
     slotStatusMsg(tr("Ready."));
 }
+
+
+void NeuroscopeApp::slotViewLinkedVideoToolBar()
+{
+    slotStatusMsg(tr("Toggle the linked video toolbar..."));
+
+    mLinkedVideoToolBar->setVisible(viewLinkedVideoToolBar->isChecked());
+    slotStatusMsg(tr("Ready."));
+}
+
+
 
 void NeuroscopeApp::slotViewStatusBar()
 {

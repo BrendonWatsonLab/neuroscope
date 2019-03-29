@@ -403,6 +403,10 @@ private Q_SLOTS:
      */
     void slotViewToolBar();
 
+    /**Toggles the bar for the linked video.
+     */
+    void slotViewLinkedVideoToolBar();
+
     /**Toggles the statusbar.
      */
     void slotViewStatusBar();
@@ -755,6 +759,7 @@ private:
     QAction* fileOpenRecent;
     QAction* viewMainToolBar;
     QAction* viewToolBar;
+    QAction* viewLinkedVideoToolBar;
     QAction* greyScale;
     QAction* displayMode;
     QAction* clusterVerticalLines;
@@ -837,6 +842,7 @@ private:
     QToolBar *mChannelToolBar;
     QToolBar *mEventToolBar;
     QToolBar *mClusterToolBar;
+    QToolBar *mLinkedVideoToolBar;
 
     QRecentFileAction *mFileOpenRecent;
     /** A counter that gets increased each time the user creates a new display of the document with "Displays"->"New ...".*/
