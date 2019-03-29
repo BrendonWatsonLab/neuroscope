@@ -1805,6 +1805,23 @@ void NeuroscopeApp::slotSeekVideoToTime(){
     this->dataMovieLinkInfo->setDataDuration(dataRecordingLength);
     this->dataMovieLinkInfo->setVideoDuration(videoPlayer->getDuration());
 
+    void setDataURL(const QString& dataFileUrl);
+
+    // Connect the videoPlayer's URL to the dataMovieLinkInfo so it updates whenever the video player changes media
+    QObject::connect(this->videoPlayer, &VideoPlayer::onMediaUrlChanged,
+                     this->dataMovieLinkInfo, &DataMovieLinkInfo::setVideoURL);
+    QObject::connect(this->videoPlayer, &VideoPlayer::onDurationChanged,
+                     this->dataMovieLinkInfo, &DataMovieLinkInfo::setVideoDuration);
+
+
+//    const NeuroscopeDoc* currDoc = this->getDocument();
+//    currDoc->
+//    QObject::connect(this->getDocument(), &VideoPlayer::onMediaUrlChanged,
+//                     this->dataMovieLinkInfo, &DataMovieLinkInfo::setVideoURL);
+//    QObject::connect(this->videoPlayer, &VideoPlayer::onDurationChanged,
+//                     this->dataMovieLinkInfo, &DataMovieLinkInfo::setVideoDuration);
+
+
     // Video Lag Time:
     //int dataOffsetToVideo = dataFileTime.msecsTo(videoFileTime);
 

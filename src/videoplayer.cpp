@@ -74,6 +74,7 @@ VideoPlayer::VideoPlayer(QWidget *parent) : QWidget(parent)
 
     m_mediaPlayer->setVideoOutput(videoWidget);
     connect(m_mediaPlayer, &QMediaPlayer::stateChanged, this, &VideoPlayer::mediaStateChanged);
+    connect(m_mediaPlayer, &QMediaPlayer::mediaChanged, this, &VideoPlayer::currentMediaChanged);
     connect(m_mediaPlayer, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)), this, SLOT(onMediaStatusChanged(QMediaPlayer::MediaStatus)));
     connect(m_mediaPlayer, &QMediaPlayer::positionChanged, this, &VideoPlayer::positionChanged);
     connect(m_mediaPlayer, &QMediaPlayer::durationChanged, this, &VideoPlayer::durationChanged);
@@ -137,6 +138,12 @@ void VideoPlayer::play()
     }
 }
 
+void VideoPlayer::currentMediaChanged(const QMediaContent &media) {
+    emit onMediaChanged(media);
+    emit onMediaUrlChanged(media.canonicalUrl().toDisplayString());
+}
+
+
 void VideoPlayer::mediaStateChanged(QMediaPlayer::State state)
 {
     switch(state) {
@@ -193,6 +200,7 @@ void VideoPlayer::durationChanged(qint64 duration)
 {
     m_positionSlider->setRange(0, duration);
     this->updatePositionDurationLabel();
+    emit onDurationChanged(duration);
 }
 
 qint64 VideoPlayer::getDuration()
@@ -209,10 +217,14 @@ qreal VideoPlayer::getFramesPerSecond() {
     return this->videoFrameRate;
 }
 
-void VideoPlayer::setPosition(int position)
+void VideoPlayer::setPosition(qlonglong position)
 {
-    m_mediaPlayer->setPosition(position);
-    this->updatePositionDurationLabel();
+    if (position != m_mediaPlayer->position()) {
+        m_mediaPlayer->setPosition(position);
+        emit onPositionChanged(position);
+        this->updatePositionDurationLabel();
+    }
+
 }
 
 

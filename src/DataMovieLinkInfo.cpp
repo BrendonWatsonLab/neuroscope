@@ -12,6 +12,23 @@ DataMovieLinkInfo::DataMovieLinkInfo(QObject *parent, const QString& movieFileUr
 
 }
 
+
+void DataMovieLinkInfo::setDataURL(const QString& dataFileUrl) {
+    if (dataFileUrl != this->dataFileUrl) {
+        this->dataFileUrl = dataFileUrl;
+        this->parse();
+        //emit valueChanged(dataFileUrl);
+    }
+}
+
+void DataMovieLinkInfo::setVideoURL(const QString& movieFileUrl) {
+    if (movieFileUrl != this->movieFileUrl) {
+        this->movieFileUrl = movieFileUrl;
+        this->parse();
+        //emit valueChanged(movieFileUrl);
+    }
+}
+
 void DataMovieLinkInfo::parse()
 {
     // Video File:

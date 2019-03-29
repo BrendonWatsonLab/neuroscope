@@ -9,8 +9,8 @@ class DataMovieLinkInfo : public QObject
 public:
     explicit DataMovieLinkInfo(QObject *parent = nullptr, const QString& movieFileUrl=QString(), const QString& dataFileUrl=QString());
 
-    QString movieFileUrl;
-    QString dataFileUrl;
+    inline QString getMovieFileUrl() const { return movieFileUrl; }
+    inline QString getDataFileUrl() const { return dataFileUrl; }
 
     // Converts a position in the data file (in MSec) to the corresponding position in the movie file (in MSec)
     qlonglong getPositionInMovieFile(qlonglong positionInDataFile);
@@ -21,9 +21,9 @@ public:
     inline qlonglong getDataOffsetToVideoMSec() const { return dataOffsetToVideoMSec; }
 
     inline qlonglong getDataDuration() const { return this->dataDuration; }
-    inline void setDataDuration(const qlonglong dataDuration) { this->dataDuration = dataDuration; }
+
     inline qlonglong getVideoDuration() const { return this->videoDuration; }
-    inline void setVideoDuration(const qlonglong videoDuration) { this->videoDuration = videoDuration; }
+
 
 
 Q_SIGNALS:
@@ -42,6 +42,14 @@ Q_SIGNALS:
 
 
 public Q_SLOTS:
+    inline void setDataDuration(const qlonglong dataDuration) { this->dataDuration = dataDuration; }
+
+    void setDataURL(const QString& dataFileUrl);
+
+    void setVideoURL(const QString& movieFileUrl);
+
+    inline void setVideoDuration(const qlonglong videoDuration) { this->videoDuration = videoDuration; }
+
 //    /**Informs the view to present the traces for an updated time frame.*/
 //    void slotStartMinuteTimeUpdated();
 
@@ -61,12 +69,17 @@ public Q_SLOTS:
 private:
     void parse();
 
+    QString movieFileUrl;
+    QString dataFileUrl;
+
     qlonglong dataOffsetToVideoMSec = 0;
 
     /**Length of the recording in miliseconds.*/
     qlonglong dataDuration = 0;
     /**Length of the recording in miliseconds.*/
     qlonglong videoDuration = 0;
+
+
 
 };
 
