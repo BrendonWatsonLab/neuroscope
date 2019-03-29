@@ -272,7 +272,6 @@ void NeuroscopeApp::initActions()
     mDrawTimeLine->setShortcut(Qt::Key_L);
     connect(mDrawTimeLine,SIGNAL(triggered()), this,SLOT(slotDrawTimeLine()));
 
-
     mSelectTool = toolMenu->addAction(tr("Select Channels"));
     mSelectTool->setIcon(QIcon(":/icons/select_tool"));
     mSelectTool->setShortcut(Qt::Key_C);
@@ -289,8 +288,8 @@ void NeuroscopeApp::initActions()
     connect(mTimeTool,SIGNAL(triggered()), this,SLOT(slotSelectTime()));
 
     mSeekVideoToTimeTool = toolMenu->addAction(tr("Seek Video to Time"));
-    mSeekVideoToTimeTool->setIcon(QIcon(":/icons/time_tool"));
-    mSeekVideoToTimeTool->setShortcut(Qt::Key_G);
+    mSeekVideoToTimeTool->setIcon(QIcon(":/icons/video_player"));
+    mSeekVideoToTimeTool->setShortcut(Qt::Key_V);
     connect(mSeekVideoToTimeTool,SIGNAL(triggered()), this,SLOT(slotSeekVideoToTime()));
 
     mEventTool = toolMenu->addAction(tr("Select Event"));

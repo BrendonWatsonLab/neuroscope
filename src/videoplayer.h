@@ -29,6 +29,9 @@ public:
         void play();
         void setPosition(int position);
 
+        void getPositionFromDataFile();
+        void setDataFilePositionFromPosition();
+
     private slots:
         void onMediaStatusChanged(QMediaPlayer::MediaStatus status);
         void mediaStateChanged(QMediaPlayer::State state);
@@ -42,7 +45,9 @@ public:
         QSlider *m_positionSlider;
         QLabel *m_errorLabel;
         QLabel *m_positionLabel;
-        QAbstractButton *m_showPositionInDataFileButton;
+
+        QAbstractButton *m_syncDataPositionFromVideoWindowButton;
+        QAbstractButton *m_syncVideoPositionFromDataWindowButton;
 
         qreal videoFrameRate = 0;
 

@@ -29,5 +29,6 @@
         <file>icons/media-seek-forward.png</file>
         <file>icons/media-plus.png</file>
         <file>icons/media-minus.png</file>
+        <file>icons/video_player.png</file>
     </qresource>
 </RCC>

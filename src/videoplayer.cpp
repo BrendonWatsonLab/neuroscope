@@ -36,9 +36,16 @@ VideoPlayer::VideoPlayer(QWidget *parent) : QWidget(parent)
     m_positionLabel = new QLabel;
     m_positionLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
-    m_showPositionInDataFileButton = new QPushButton(tr("Sync Data File"));
-    m_showPositionInDataFileButton->setEnabled(false);
-    //connect(openButton, &QAbstractButton::clicked, this, &VideoPlayer::openFile);
+
+
+    m_syncDataPositionFromVideoWindowButton = new QPushButton(tr("Video --> Data"));
+    m_syncDataPositionFromVideoWindowButton->setEnabled(false);
+    connect(m_syncDataPositionFromVideoWindowButton, &QAbstractButton::clicked, this, &VideoPlayer::setDataFilePositionFromPosition);
+
+
+    m_syncVideoPositionFromDataWindowButton = new QPushButton(tr("Data --> Video"));
+    m_syncVideoPositionFromDataWindowButton->setEnabled(false);
+    connect(m_syncVideoPositionFromDataWindowButton, &QAbstractButton::clicked, this, &VideoPlayer::getPositionFromDataFile);
 
     m_errorLabel = new QLabel;
     m_errorLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum);
@@ -53,7 +60,9 @@ VideoPlayer::VideoPlayer(QWidget *parent) : QWidget(parent)
     secondaryControlsLayout->setMargin(0);
     secondaryControlsLayout->addWidget(openButton);
     secondaryControlsLayout->addWidget(m_positionLabel);
-    secondaryControlsLayout->addWidget(m_showPositionInDataFileButton);
+    secondaryControlsLayout->addWidget(m_syncDataPositionFromVideoWindowButton);
+    secondaryControlsLayout->addWidget(m_syncVideoPositionFromDataWindowButton);
+
 
     QBoxLayout *layout = new QVBoxLayout;
     layout->addWidget(videoWidget);
@@ -73,6 +82,15 @@ VideoPlayer::VideoPlayer(QWidget *parent) : QWidget(parent)
 
 VideoPlayer::~VideoPlayer()
 {
+}
+
+
+void VideoPlayer::getPositionFromDataFile() {
+
+}
+
+void VideoPlayer::setDataFilePositionFromPosition() {
+
 }
 
 void VideoPlayer::openFile()
