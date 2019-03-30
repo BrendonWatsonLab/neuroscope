@@ -287,11 +287,6 @@ void NeuroscopeApp::initActions()
     mTimeTool->setShortcut(Qt::Key_T);
     connect(mTimeTool,SIGNAL(triggered()), this,SLOT(slotSelectTime()));
 
-    mSeekVideoToTimeTool = toolMenu->addAction(tr("Seek Video to Time"));
-    mSeekVideoToTimeTool->setIcon(QIcon(":/icons/video_player"));
-    mSeekVideoToTimeTool->setShortcut(Qt::Key_V);
-    connect(mSeekVideoToTimeTool,SIGNAL(triggered()), this,SLOT(slotSeekVideoToTime()));
-
     mEventTool = toolMenu->addAction(tr("Select Event"));
     mEventTool->setIcon(QIcon(":/icons/event_tool"));
     mEventTool->setShortcut(Qt::Key_E);
@@ -567,11 +562,27 @@ void NeuroscopeApp::initActions()
 
     calibrationBar->setChecked(false);
 
-
     settingsMenu->addSeparator();
     mPreferenceAction = settingsMenu->addAction(tr("Preferences"));
     mPreferenceAction->setIcon(QIcon(":/shared-icons/configure"));
     connect(mPreferenceAction,SIGNAL(triggered()), this,SLOT(executePreferencesDlg()));
+
+
+    // Video-Linking Menu:
+    QMenu *videoLinkMenu = menuBar()->addMenu(tr("&Video"));
+    mLinkVideo = videoLinkMenu->addAction(tr("Link Video"));
+    mLinkVideo->setIcon(QIcon(":/icons/video_player"));
+    //mLinkVideo->setShortcut(Qt::Key_V);
+    connect(mLinkVideo,SIGNAL(triggered()), this,SLOT(slotDisplayVideoPlayer()));
+
+    mSeekVideoToTimeTool = videoLinkMenu->addAction(tr("Seek Video to Time"));
+    mSeekVideoToTimeTool->setIcon(QIcon(":/icons/video_player"));
+    mSeekVideoToTimeTool->setShortcut(Qt::Key_V);
+    connect(mSeekVideoToTimeTool,SIGNAL(triggered()), this,SLOT(slotSeekVideoToTime()));
+
+
+
+
 
     //Help menu
     QMenu *helpMenu = menuBar()->addMenu(tr("&Help"));
@@ -693,7 +704,7 @@ void NeuroscopeApp::initActions()
     mLinkedVideoToolBar = new QToolBar(tr("Linked Video Actions"));
     mLinkedVideoToolBar->setObjectName("Linked Video Actions");
     mLinkedVideoToolBar->addAction(mSeekVideoToTimeTool);
-    addToolBar(Qt::RightToolBarArea, mLinkedVideoToolBar);
+    addToolBar(Qt::LeftToolBarArea, mLinkedVideoToolBar);
 
     readSettings();
 
@@ -741,18 +752,6 @@ void NeuroscopeApp::executePreferencesDlg(){
             applyPreferences();                      // let settings take effect
         }
     }
-}
-
-void NeuroscopeApp::displayVideoPlayer() {
-    if (videoPlayer == 0L) {
-        videoPlayer = new VideoPlayer();
-        videoPlayer->openFile();
-        const QRect availableGeometry = QApplication::desktop()->availableGeometry(videoPlayer);
-        videoPlayer->resize(availableGeometry.width() / 6, availableGeometry.height() / 4);
-    }
-    videoPlayer->show();
-    // Set up any settings for the video player
-    // Connect any signals for the video player
 }
 
 void NeuroscopeApp::applyPreferences() {
@@ -1806,18 +1805,19 @@ DataMovieLinkInfo* NeuroscopeApp::getDataMovieLinkInfo() {
     return this->dataMovieLinkInfo;
 }
 
-void NeuroscopeApp::slotSeekVideoToTime(){
-    slotStatusMsg(tr("Trying to seek the video..."));
-    NeuroscopeView* view = activeView();
-    view->setMode(TraceView::DRAW_LINE,true);
 
-    select = false;
 
-    //VideoPlayer player;
-    this->displayVideoPlayer();
-
+void NeuroscopeApp::slotDisplayVideoPlayer() {
+    if (videoPlayer == 0L) {
+        videoPlayer = new VideoPlayer();
+        videoPlayer->openFile();
+        const QRect availableGeometry = QApplication::desktop()->availableGeometry(videoPlayer);
+        videoPlayer->resize(availableGeometry.width() / 6, availableGeometry.height() / 4);
+    }
+    videoPlayer->show();
+    // Set up any settings for the video player
     // Video File:
-    const QString videoURL = videoPlayer->getUrl().toDisplayString();    
+    const QString videoURL = videoPlayer->getUrl().toDisplayString();
     // Data File:
     const QString dataURL = getDocument()->url();
     // Perform the diff
@@ -1826,9 +1826,7 @@ void NeuroscopeApp::slotSeekVideoToTime(){
     this->dataMovieLinkInfo = new DataMovieLinkInfo(this, videoURL, dataURL);
     this->dataMovieLinkInfo->setDataDuration(dataRecordingLength);
     this->dataMovieLinkInfo->setVideoDuration(videoPlayer->getDuration());
-
-    void setDataURL(const QString& dataFileUrl);
-
+    // Connect any signals for the video player
     // Connect the videoPlayer's URL to the dataMovieLinkInfo so it updates whenever the video player changes media
     QObject::connect(this->videoPlayer, &VideoPlayer::onMediaUrlChanged,
                      this->dataMovieLinkInfo, &DataMovieLinkInfo::setVideoURL);
@@ -1839,14 +1837,25 @@ void NeuroscopeApp::slotSeekVideoToTime(){
 //    const NeuroscopeDoc* currDoc = this->getDocument();
 //    currDoc->
 //    QObject::connect(this->getDocument(), &VideoPlayer::onMediaUrlChanged,
-//                     this->dataMovieLinkInfo, &DataMovieLinkInfo::setVideoURL);
+//                     this->dataMovieLinkInfo, &DataMovieLinkInfo::setDataURL);
 //    QObject::connect(this->videoPlayer, &VideoPlayer::onDurationChanged,
 //                     this->dataMovieLinkInfo, &DataMovieLinkInfo::setVideoDuration);
+}
+
+void NeuroscopeApp::slotSeekVideoToTime(){
+    slotStatusMsg(tr("Trying to seek the video..."));
+    NeuroscopeView* view = activeView();
+    view->setMode(TraceView::DRAW_LINE,true);
+
+    select = false;
+
+    //VideoPlayer player;
+    this->slotDisplayVideoPlayer();
+
+
 
 
     // Video Lag Time:
-    //int dataOffsetToVideo = dataFileTime.msecsTo(videoFileTime);
-
     int dataOffsetToVideo = this->dataMovieLinkInfo->getDataOffsetToVideoMSec();
     QString printable = QStringLiteral("Offset to video: %1 [msec].").arg(dataOffsetToVideo);
     qInfo(qUtf8Printable(printable));
