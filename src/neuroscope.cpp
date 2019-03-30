@@ -1838,8 +1838,14 @@ void NeuroscopeApp::slotDisplayVideoPlayer() {
 
     //TODO: Scrubbing the data view currently scrubs the video video as well (which is desired) but it neglects the offset.
     // Perhaps store dataMovieLinkInfo in videoPlayer so it has access to this information, or connect the signals intermediately through this class (neuroscope) or DataMovieLinkInfo
+    // Connect to dataMovieLinkInfo intermediate. dataMovieLinkInfo's slotDataOffsetAndWindowUpdated(...) function takes the data offset and produces the movie offset. It then emits the updateOffsetAndWindow signal which is recieved by the video player to set the correct position.
     QObject::connect(this->activeView(), &NeuroscopeView::timeChanged,
-                     this->videoPlayer, &VideoPlayer::setPosition);
+                     this->dataMovieLinkInfo, &DataMovieLinkInfo::slotDataOffsetAndWindowUpdated);
+
+    // Connect from dataMovieLinkInfo's signal to video player
+    QObject::connect(this->dataMovieLinkInfo, &DataMovieLinkInfo::updateOffsetAndWindow,
+                         this->videoPlayer, &VideoPlayer::setPosition);
+
 
 
 

@@ -49,7 +49,7 @@ Q_SIGNALS:
   * @param startTime starting time.
   * @param timeWindow time window.
   */
-    //    void updateStartAndDuration(long startTime, long timeWindow);
+    void updateOffsetAndWindow(long startTime, long timeWindow);
     //void updateVideoDuration(qlonglong videoDuration);
     //void updateDataDuration(qlonglong dataDuration);
 
@@ -64,8 +64,8 @@ public Q_SLOTS:
 
     inline void setVideoDuration(const qlonglong videoDuration) { this->videoDuration = videoDuration; }
 
-//    /**Informs the view to present the traces for an updated time frame.*/
-//    void slotStartMinuteTimeUpdated();
+    /**Informs the mediaPlayer to adjust the position to reflect the updated time frame.*/
+    void slotDataOffsetAndWindowUpdated(qlonglong startTime, qlonglong timeWindow);
 
 //    /**Informs the view to present the traces for an updated time frame.*/
 //    void slotStartSecondTimeUpdated(/*int start*/);
