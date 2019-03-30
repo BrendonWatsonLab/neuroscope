@@ -570,6 +570,7 @@ void NeuroscopeApp::initActions()
 
     // Video-Linking Menu:
     QMenu *videoLinkMenu = menuBar()->addMenu(tr("&Video"));
+
     mLinkVideo = videoLinkMenu->addAction(tr("Link Video"));
     mLinkVideo->setIcon(QIcon(":/icons/video_player"));
     //mLinkVideo->setShortcut(Qt::Key_V);
@@ -703,6 +704,7 @@ void NeuroscopeApp::initActions()
 
     mLinkedVideoToolBar = new QToolBar(tr("Linked Video Actions"));
     mLinkedVideoToolBar->setObjectName("Linked Video Actions");
+    mLinkedVideoToolBar->addAction(mLinkVideo);
     mLinkedVideoToolBar->addAction(mSeekVideoToTimeTool);
     addToolBar(Qt::LeftToolBarArea, mLinkedVideoToolBar);
 
@@ -1834,6 +1836,14 @@ void NeuroscopeApp::slotDisplayVideoPlayer() {
                      this->dataMovieLinkInfo, &DataMovieLinkInfo::setVideoDuration);
 
 
+
+//    this->getDocument()->tracesDataProvider()
+//    this->activeView()->traceWidget
+
+    QObject::connect(this->activeView(), &NeuroscopeView::timeChanged,
+                     this->videoPlayer, &VideoPlayer::setPosition);
+
+
 //    const NeuroscopeDoc* currDoc = this->getDocument();
 //    currDoc->
 //    QObject::connect(this->getDocument(), &VideoPlayer::onMediaUrlChanged,
@@ -1851,9 +1861,6 @@ void NeuroscopeApp::slotSeekVideoToTime(){
 
     //VideoPlayer player;
     this->slotDisplayVideoPlayer();
-
-
-
 
     // Video Lag Time:
     int dataOffsetToVideo = this->dataMovieLinkInfo->getDataOffsetToVideoMSec();

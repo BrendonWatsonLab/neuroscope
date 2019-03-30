@@ -16,6 +16,7 @@ VideoPlayer::VideoPlayer(QWidget *parent) : QWidget(parent)
 {
     m_mediaPlayer = new QMediaPlayer(this, QMediaPlayer::VideoSurface);
     QVideoWidget *videoWidget = new QVideoWidget;
+    videoWidget->setAspectRatioMode(Qt::AspectRatioMode::KeepAspectRatio);
 
     QAbstractButton *openButton = new QPushButton(tr("Open..."));
     connect(openButton, &QAbstractButton::clicked, this, &VideoPlayer::openFile);
@@ -38,11 +39,9 @@ VideoPlayer::VideoPlayer(QWidget *parent) : QWidget(parent)
     m_positionLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
 
-
     m_syncDataPositionFromVideoWindowButton = new QPushButton(tr("Video --> Data"));
     m_syncDataPositionFromVideoWindowButton->setEnabled(false);
     connect(m_syncDataPositionFromVideoWindowButton, &QAbstractButton::clicked, this, &VideoPlayer::setDataFilePositionFromPosition);
-
 
     m_syncVideoPositionFromDataWindowButton = new QPushButton(tr("Data --> Video"));
     m_syncVideoPositionFromDataWindowButton->setEnabled(false);
