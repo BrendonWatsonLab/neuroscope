@@ -1836,20 +1836,13 @@ void NeuroscopeApp::slotDisplayVideoPlayer() {
                      this->dataMovieLinkInfo, &DataMovieLinkInfo::setVideoDuration);
 
 
-
-//    this->getDocument()->tracesDataProvider()
-//    this->activeView()->traceWidget
-
+    //TODO: Scrubbing the data view currently scrubs the video video as well (which is desired) but it neglects the offset.
+    // Perhaps store dataMovieLinkInfo in videoPlayer so it has access to this information, or connect the signals intermediately through this class (neuroscope) or DataMovieLinkInfo
     QObject::connect(this->activeView(), &NeuroscopeView::timeChanged,
                      this->videoPlayer, &VideoPlayer::setPosition);
 
 
-//    const NeuroscopeDoc* currDoc = this->getDocument();
-//    currDoc->
-//    QObject::connect(this->getDocument(), &VideoPlayer::onMediaUrlChanged,
-//                     this->dataMovieLinkInfo, &DataMovieLinkInfo::setDataURL);
-//    QObject::connect(this->videoPlayer, &VideoPlayer::onDurationChanged,
-//                     this->dataMovieLinkInfo, &DataMovieLinkInfo::setVideoDuration);
+
 }
 
 void NeuroscopeApp::slotSeekVideoToTime(){
