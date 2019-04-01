@@ -30,13 +30,15 @@ public:
         void openFile();
         void play();
         void setPosition(qlonglong position);
+        void setPositionAndActiveWindow(qlonglong position, qlonglong activeWindow);
 
         void getPositionFromDataFile();
         void setDataFilePositionFromPosition();
 
 
     signals:
-        void onPositionChanged(qint64 newPosition);
+        void onPositionOrActiveWindowChanged(qint64 newPosition, qint64 newActiveWindow);
+        //void onPositionChanged(qint64 newPosition);
         void onDurationChanged(qint64 newDuration);
         void onMediaChanged(const QMediaContent& media);
         void onMediaUrlChanged(const QString& newMediaUrl);
@@ -60,9 +62,9 @@ public:
         QAbstractButton *m_syncVideoPositionFromDataWindowButton;
 
         qreal videoFrameRate = 0;
+        qint64 activeWindowDuration = 1000;
 
         void updatePositionDurationLabel();
-
 
 };
 

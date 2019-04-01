@@ -253,10 +253,22 @@ void VideoPlayer::printPlayableFileFormats()
 
 void VideoPlayer::setPosition(qlonglong position)
 {
-    if (position != m_mediaPlayer->position()) {
+    this->setPositionAndActiveWindow(position, this->activeWindowDuration);
+}
+
+void VideoPlayer::setPositionAndActiveWindow(qlonglong position, qlonglong activeWindow) {
+    bool positionChanged = (position != m_mediaPlayer->position());
+    bool activeWindowDurationChanged = (activeWindow != this->activeWindowDuration);
+
+    if (activeWindowDurationChanged) {
+        this->activeWindowDuration = activeWindow;
+    }
+    if (positionChanged) {
         m_mediaPlayer->setPosition(position);
-        emit onPositionChanged(position);
         this->updatePositionDurationLabel();
+    }
+    if (positionChanged || activeWindowDurationChanged) {
+        emit onPositionOrActiveWindowChanged(position, activeWindow);
     }
 
 }

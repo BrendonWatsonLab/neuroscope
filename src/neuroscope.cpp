@@ -1837,17 +1837,37 @@ void NeuroscopeApp::slotDisplayVideoPlayer() {
                      this->dataMovieLinkInfo, &DataMovieLinkInfo::setVideoDuration);
 
     // Perhaps store dataMovieLinkInfo in videoPlayer so it has access to this information, or connect the signals intermediately through this class (neuroscope) or DataMovieLinkInfo
-    // Connect to dataMovieLinkInfo intermediate. dataMovieLinkInfo's slotDataOffsetAndWindowUpdated(...) function takes the data offset and produces the movie offset. It then emits the updateOffsetAndWindow signal which is recieved by the video player to set the correct position.
+    // Connect to dataMovieLinkInfo intermediate. dataMovieLinkInfo's slotDataOffsetAndWindowUpdated(...) function takes the data offset and produces the movie offset. It then emits the updateOffsetAndWindowFromData signal which is recieved by the video player to set the correct position.
     QObject::connect(this->activeView(), &NeuroscopeView::timeChanged,
                      this->dataMovieLinkInfo, &DataMovieLinkInfo::slotDataOffsetAndWindowUpdated);
 
+
     // Connect from dataMovieLinkInfo's signal to video player
-    QObject::connect(this->dataMovieLinkInfo, &DataMovieLinkInfo::updateOffsetAndWindow,
-                         this->videoPlayer, &VideoPlayer::setPosition);
+//    QObject::connect(this->dataMovieLinkInfo, &DataMovieLinkInfo::updateOffsetAndWindowFromData,
+//                         this->videoPlayer, &VideoPlayer::setPositionAndActiveWindow);
 
     // Connect the Video->Data Sync Signals/Slots:
     //TODO: check if the value changed to avoid triggering an infinite loop
+//    QObject::connect(this->videoPlayer, &VideoPlayer::onPositionChanged,
+//                         this->dataMovieLinkInfo, &DataMovieLinkInfo::slotVideoOffsetAndWindowUpdated);
+    QObject::connect(this->videoPlayer, &VideoPlayer::onPositionOrActiveWindowChanged,
+                         this->dataMovieLinkInfo, &DataMovieLinkInfo::slotVideoOffsetAndWindowUpdated);
 
+    // dataMovieLinkInfo->data
+//    QObject::connect(this->dataMovieLinkInfo, &DataMovieLinkInfo::updateOffsetAndWindowFromVideo,
+//                         this->activeView(), &NeuroscopeView::setStartAndDuration);
+
+    QObject::connect(this->dataMovieLinkInfo, &DataMovieLinkInfo::updateOffsetAndWindowFromVideo,
+                         this->activeView()->getTraceWidget(), &TraceWidget::slotSetStartAndDuration);
+
+
+    //this->activeView()->traceWidget->updateStartAndDuration
+
+    //connect(traceWidget,SIGNAL(updateStartAndDuration(long,long)),this, SLOT(setStartAndDuration(long,long)));
+    // TraceWidget::slotSetStartAndDuration
+    //void slotSetStartAndDuration(long time,long duration);
+
+    //void updateStartAndDuration(long startTime,long timeWindow);
 
 
 

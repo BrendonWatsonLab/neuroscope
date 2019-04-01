@@ -155,6 +155,9 @@ public:
     * false if they are display in color.*/
     bool getGreyScale() const {return greyScaleMode;}
 
+    /** Returns the trace widget object reference */
+    TraceWidget* getTraceWidget() const { return this->traceWidget; }
+
     /**
     * Updates the list of channels shown with @p channelsToShow.
     * Makes the different views update their drawing if need it. This method is called only on the active view.
