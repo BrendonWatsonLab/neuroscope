@@ -1855,7 +1855,6 @@ void NeuroscopeApp::slotDisplayVideoPlayer() {
     QObject::connect(this->dataMovieLinkInfo, &DataMovieLinkInfo::updateOffsetAndWindowFromVideo,
                          this->activeView()->getTraceWidget(), &TraceWidget::slotSetStartAndDuration);
 
-
     //this->activeView()->traceWidget->updateStartAndDuration
     //connect(traceWidget,SIGNAL(updateStartAndDuration(long,long)),this, SLOT(setStartAndDuration(long,long)));
     // TraceWidget::slotSetStartAndDuration
