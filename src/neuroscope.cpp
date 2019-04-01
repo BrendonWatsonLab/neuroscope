@@ -1811,7 +1811,7 @@ DataMovieLinkInfo* NeuroscopeApp::getDataMovieLinkInfo() {
 
 
 void NeuroscopeApp::slotDisplayVideoPlayer() {
-    if (videoPlayer == 0L) {
+    if (videoPlayer == nullptr) {
         videoPlayer = new VideoPlayer();
         videoPlayer->openFile();
         const QRect availableGeometry = QApplication::desktop()->availableGeometry(videoPlayer);
