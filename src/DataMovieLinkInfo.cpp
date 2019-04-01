@@ -34,8 +34,14 @@ void DataMovieLinkInfo::setVideoURL(const QString& movieFileUrl) {
 
 void DataMovieLinkInfo::parse()
 {
+    //NOTE: should be forward slash even on windows!
+        // DataFileURL: C:/Users/watsonlab/Desktop/VideoSync/Jasper_190319_125141/amplifier_analogin_auxiliary_int16.dat
+        // MovieFileURL: file:///C:/Users/watsonlab/Desktop/VideoSync/Jasper_20190319_125207822.m4v
+    //QChar separatorCharacter = QDir::separator();
+    QChar separatorCharacter = '/';
+
     // Video File:
-    const QStringList videoFilePathParts = movieFileUrl.split(QDir::separator(), QString::SkipEmptyParts);
+    const QStringList videoFilePathParts = movieFileUrl.split(separatorCharacter, QString::SkipEmptyParts);
     const QString videoFileName = videoFilePathParts.last();
     const QStringList videoFileNameComponents = videoFileName.split(QLatin1Char('.'), QString::SkipEmptyParts);
     const QString videoFileBaseName = videoFileNameComponents.first();
@@ -48,7 +54,8 @@ void DataMovieLinkInfo::parse()
 
     // Perform the diff
     qInfo(qUtf8Printable(dataFileUrl));
-    QStringList dataFilePathParts = dataFileUrl.split(QDir::separator(), QString::SkipEmptyParts);
+
+    QStringList dataFilePathParts = dataFileUrl.split(separatorCharacter, QString::SkipEmptyParts);
     int parentDirectoryIndex = dataFilePathParts.count() - 2;
     QString parentDirectoryName = dataFilePathParts[parentDirectoryIndex];
     QStringList parentDirectoryNameParts = parentDirectoryName.split(QLatin1Char('_'), QString::SkipEmptyParts);

@@ -18,6 +18,7 @@ VideoPlayer::VideoPlayer(QWidget *parent) : QWidget(parent)
     QVideoWidget *videoWidget = new QVideoWidget;
     videoWidget->setAspectRatioMode(Qt::AspectRatioMode::KeepAspectRatio);
 
+	// Controls:
     QAbstractButton *openButton = new QPushButton(tr("Open..."));
     connect(openButton, &QAbstractButton::clicked, this, &VideoPlayer::openFile);
 
@@ -50,6 +51,7 @@ VideoPlayer::VideoPlayer(QWidget *parent) : QWidget(parent)
     m_errorLabel = new QLabel;
     m_errorLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum);
 
+	// Layouts:
     QBoxLayout *controlLayout = new QHBoxLayout;
     controlLayout->setMargin(0);
     //controlLayout->addWidget(openButton);
@@ -72,6 +74,7 @@ VideoPlayer::VideoPlayer(QWidget *parent) : QWidget(parent)
 
     setLayout(layout);
 
+	// Connect MediaPlayer Signals:
     m_mediaPlayer->setVideoOutput(videoWidget);
     connect(m_mediaPlayer, &QMediaPlayer::stateChanged, this, &VideoPlayer::mediaStateChanged);
     connect(m_mediaPlayer, &QMediaPlayer::mediaChanged, this, &VideoPlayer::currentMediaChanged);
@@ -79,6 +82,9 @@ VideoPlayer::VideoPlayer(QWidget *parent) : QWidget(parent)
     connect(m_mediaPlayer, &QMediaPlayer::positionChanged, this, &VideoPlayer::positionChanged);
     connect(m_mediaPlayer, &QMediaPlayer::durationChanged, this, &VideoPlayer::durationChanged);
     connect(m_mediaPlayer, QOverload<QMediaPlayer::Error>::of(&QMediaPlayer::error), this, &VideoPlayer::handleError);
+
+
+    printPlayableFileFormats();
 }
 
 VideoPlayer::~VideoPlayer()
@@ -190,6 +196,21 @@ void VideoPlayer::getMetaData() {
 
 }
 
+bool VideoPlayer::hasValidVideo()
+{	
+    const QMediaPlayer::MediaStatus status = m_mediaPlayer->mediaStatus();
+	switch (status) {
+	case QMediaPlayer::LoadedMedia:
+		return m_mediaPlayer->isVideoAvailable();
+	case QMediaPlayer::EndOfMedia:
+		return m_mediaPlayer->isVideoAvailable();
+	case QMediaPlayer::BufferedMedia:
+		return m_mediaPlayer->isVideoAvailable();
+	default:
+		return false;
+	}
+}
+
 void VideoPlayer::positionChanged(qint64 position)
 {
     m_positionSlider->setValue(position);
@@ -215,6 +236,19 @@ qint64 VideoPlayer::getPosition()
 
 qreal VideoPlayer::getFramesPerSecond() {
     return this->videoFrameRate;
+}
+
+void VideoPlayer::printPlayableFileFormats()
+{
+    QStringList supportedMimeTypes = m_mediaPlayer->supportedMimeTypes();
+    QString outputString = "supportedMimeTypes: ";
+    for(int i=0 ; i < supportedMimeTypes.length() ; i++)
+    {
+        outputString.append(supportedMimeTypes.at(i));
+        outputString.append(", ");
+    }
+
+    qInfo(qUtf8Printable(outputString));
 }
 
 void VideoPlayer::setPosition(qlonglong position)
@@ -249,5 +283,6 @@ void VideoPlayer::handleError()
         message += " #" + QString::number(int(m_mediaPlayer->error()));
     else
         message += errorString;
+
     m_errorLabel->setText(message);
 }

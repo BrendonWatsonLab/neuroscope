@@ -22,7 +22,9 @@ public:
         qint64 getDuration();
         qint64 getPosition();
         qreal getFramesPerSecond();
+		void printPlayableFileFormats();
         void getMetaData();
+		bool hasValidVideo();
 
     public slots:
         void openFile();

@@ -86,6 +86,7 @@ NeuroscopeApp::NeuroscopeApp()
     ,undoRedoInprocess(false)
     ,isPositionFileLoaded(false)
     ,videoPlayer(0L)
+    ,dataMovieLinkInfo(0L)
 {
     setObjectName("NeuroScope");
     initView();
