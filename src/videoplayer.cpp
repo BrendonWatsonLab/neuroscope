@@ -211,6 +211,7 @@ bool VideoPlayer::hasValidVideo()
 	}
 }
 
+//** This occurs when position is changed due to media playback (via the play button) or something similar */
 void VideoPlayer::positionChanged(qint64 position)
 {
     m_positionSlider->setValue(position);
@@ -251,11 +252,13 @@ void VideoPlayer::printPlayableFileFormats()
     qInfo(qUtf8Printable(outputString));
 }
 
+/* This called when the slider is adjusted */
 void VideoPlayer::setPosition(qlonglong position)
 {
     this->setPositionAndActiveWindow(position, this->activeWindowDuration);
 }
 
+/* This is called when the slider is adjusted or moved in correspondence to a synchronized data view */
 void VideoPlayer::setPositionAndActiveWindow(qlonglong position, qlonglong activeWindow) {
     bool positionChanged = (position != m_mediaPlayer->position());
     bool activeWindowDurationChanged = (activeWindow != this->activeWindowDuration);
