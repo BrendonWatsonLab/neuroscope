@@ -103,3 +103,14 @@ void DataMovieLinkInfo::slotDataOffsetAndWindowUpdated(qlonglong startTime, qlon
     // Re-emit the new event for reception by the video player.
     emit updateOffsetAndWindow(moviePosition, timeWindow);
 }
+
+// Triggered when the user adjusts the position in the video window. Translates the updated position to the data window and sends out the signal
+void DataMovieLinkInfo::slotDataOffsetAndWindowUpdatedByVideo(qlonglong startTime, qlonglong timeWindow) {
+    // If we want to sync to the start of the window (which we assume we do), add the offset
+    qlonglong dataPosition = this->getPositionInDataFile(startTime);
+    // Re-emit the new event for reception by the video player.
+    emit updateOffsetAndWindowFromVideo(dataPosition, timeWindow);
+}
+
+
+

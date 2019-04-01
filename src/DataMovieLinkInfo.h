@@ -52,6 +52,7 @@ Q_SIGNALS:
     void updateOffsetAndWindow(long startTime, long timeWindow);
     //void updateVideoDuration(qlonglong videoDuration);
     //void updateDataDuration(qlonglong dataDuration);
+    void updateOffsetAndWindowFromVideo(long startTime, long timeWindow);
 
 
 
@@ -66,6 +67,9 @@ public Q_SLOTS:
 
     /**Informs the mediaPlayer to adjust the position to reflect the updated time frame.*/
     void slotDataOffsetAndWindowUpdated(qlonglong startTime, qlonglong timeWindow);
+
+    /**Informs the dataPlayer to adjust the position to reflect the updated time frame.*/
+    void slotDataOffsetAndWindowUpdatedByVideo(qlonglong startTime, qlonglong timeWindow);
 
 //    /**Informs the view to present the traces for an updated time frame.*/
 //    void slotStartSecondTimeUpdated(/*int start*/);
