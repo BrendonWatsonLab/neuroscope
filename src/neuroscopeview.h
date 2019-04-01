@@ -640,9 +640,30 @@ public Q_SLOTS:
    */
     void setStartAndDuration(long start,long duration){
         startTime = start;
+        emit startTimeChanged(start);
         timeWindow = duration;
+        emit windowDurationChanged(duration);
         emit timeChanged(start,duration);
     }
+
+    /**Sets the starting time in miliseconds.
+   * @param start starting time.
+   */
+    void setStartTime(long start){
+        startTime = start;
+        emit startTimeChanged(start);
+        emit timeChanged(start,timeWindow);
+    }
+
+    /**Sets the time window in miliseconds.
+   * @param duration time window.
+   */
+    void setWindowDuration(long duration){
+        timeWindow = duration;
+        emit windowDurationChanged(duration);
+        emit timeChanged(startTime,duration);
+    }
+
 
     /**Informs the application that an event has been modified.
   * @param providerName name use to identified the event provider containing the modified event.
@@ -767,6 +788,8 @@ Q_SIGNALS:
     void updateEvents(const QString &providerName,QList<int>& eventsToShow,bool active);
     void waveformInformationUpdated(int nbSamplesBefore,int nbSamplesAfter,bool active);
     void positionInformationUpdated(int width, int height,QImage backgroundImage,bool newOrientation,bool active);
+    void startTimeChanged(long start);
+    void windowDurationChanged(long duration);
     void timeChanged(long start,long duration);
     void positionViewClosed();
     void clusterProviderUpdated(bool active);
