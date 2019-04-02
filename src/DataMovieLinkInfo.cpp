@@ -61,31 +61,13 @@ void DataMovieLinkInfo::parse()
     QStringList parentDirectoryNameParts = parentDirectoryName.split(QLatin1Char('_'), QString::SkipEmptyParts);
 
     // Jasper_190319_125141
-    //QString date_string_on_db = parentDirectoryNameParts[1] + "T" + parentDirectoryNameParts[2];
     QDate dataFileDate = QDate::fromString(parentDirectoryNameParts[1],"yyMMdd");
     QTime dataFileTime = QTime::fromString(parentDirectoryNameParts[2], "hhmmss");
-
 
     // Video Lag Time:
     this->dataOffsetToVideoMSec = dataFileTime.msecsTo(videoFileTime);
 
-//    QTime earliestTime;
-//    QTime latestTime;
-
-//    if (dataFileTime.operator<(videoFileTime)) {
-//        //videoFile start LAGS dataFile start
-//        earliestTime = dataFileTime;
-//    }
-//    else if (dataFileTime.operator>(videoFileTime)) {
-//        //videoFile start LEADS dataFile start
-//        earliestTime = videoFileTime;
-//    }
-//    else {
-//        // Otherwise they're exactly equal!
-//        earliestTime = dataFileTime;
-//    }
-
-    QString printable = QStringLiteral("Offset to video: %1 [msec].").arg(this->dataOffsetToVideoMSec);
+    QString printable = QStringLiteral("Offset to video: %1 [msec] - %2").arg(this->dataOffsetToVideoMSec).arg(DataMovieLinkInfo::formatAsComponents(this->dataOffsetToVideoMSec));
     qInfo(qUtf8Printable(printable));
 
 }

@@ -1859,6 +1859,8 @@ void NeuroscopeApp::slotDisplayVideoPlayer() {
         QObject::connect(this->dataMovieLinkInfo, &DataMovieLinkInfo::updateOffsetAndWindowFromVideo,
                              this->activeView()->getTraceWidget(), &TraceWidget::slotSetStartAndDuration);
 
+        // Refresh the thumbnail
+        this->videoPlayer->refreshThumbnail();
 
 //    }
     //TODO: perhaps disconnect signals if this->dataMovieLinkInfo exists?

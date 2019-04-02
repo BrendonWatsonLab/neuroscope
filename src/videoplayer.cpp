@@ -373,3 +373,15 @@ void VideoPlayer::bindShortcut(QAbstractButton *button, const QKeySequence &shor
     QObject::connect(new QShortcut(shortcut, button), &QShortcut::activated, [button](){ button->animateClick(); });
 }
 
+
+void VideoPlayer::refreshThumbnail() {
+    switch(this->m_mediaPlayer->state()) {
+    case QMediaPlayer::PlayingState:
+        return; // If we're already playing, there is no need to update the thumbnail
+    default:
+        // Play and then immediately pause to refresh the thumbnail
+        this->play();
+        this->play();
+        break;
+    }
+}

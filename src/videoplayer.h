@@ -36,6 +36,8 @@ public:
         void setPosition(qlonglong position);
         void setPositionAndActiveWindow(qlonglong position, qlonglong activeWindow);
 
+        void refreshThumbnail();
+
     signals:
         void onPositionOrActiveWindowChanged(qint64 newPosition, qint64 newActiveWindow);
         //void onPositionChanged(qint64 newPosition);
