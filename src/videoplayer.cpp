@@ -257,12 +257,14 @@ bool VideoPlayer::hasValidVideo()
     const QMediaPlayer::MediaStatus status = m_mediaPlayer->mediaStatus();
 	switch (status) {
 	case QMediaPlayer::LoadedMedia:
-		return m_mediaPlayer->isVideoAvailable();
 	case QMediaPlayer::EndOfMedia:
-		return m_mediaPlayer->isVideoAvailable();
 	case QMediaPlayer::BufferedMedia:
-		return m_mediaPlayer->isVideoAvailable();
-	default:
+//        if (!m_mediaPlayer->isVideoAvailable()) {
+//            return false;
+//        }
+//        return (m_mediaPlayer->duration() > 0);
+        return m_mediaPlayer->isVideoAvailable();
+    default:
 		return false;
 	}
 }
