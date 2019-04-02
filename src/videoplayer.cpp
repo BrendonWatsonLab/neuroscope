@@ -9,9 +9,6 @@
 #include <QMediaMetaData>
 #include "DataMovieLinkInfo.h"
 
-//currentMediaChanged(const QMediaContent &media)
-
-
 VideoPlayer::VideoPlayer(QWidget *parent) : QWidget(parent)
 {
     m_mediaPlayer = new QMediaPlayer(this, QMediaPlayer::VideoSurface);

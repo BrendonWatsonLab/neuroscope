@@ -4,6 +4,9 @@
 #include <QObject>
 #include "math.h"
 
+/**
+ * @brief The DataMovieLinkInfo class serves as an intermediate between the data window and the video window. It controls the signals between the two.
+ */
 class DataMovieLinkInfo : public QObject
 {
     Q_OBJECT
@@ -25,18 +28,18 @@ public:
 
     inline qlonglong getVideoDuration() const { return this->videoDuration; }
 
-    /** Takes a time in msec (representing either a duration of an offset) and brakes it down into its constituate components (12 min, 14 s, 978 ms) */
+    /**Takes a time in msec (representing either a duration of an offset) and brakes it down into its constituate components (12 min, 14 s, 978 ms) */
     // This section was extracted from the logic in traceview.cpp (lines 2352-2372)
-    /** Returns the minute components for a duration specified in msec */
+    /**Returns the minute components for a duration specified in msec */
     inline static int minuteComponent(qlonglong msecDuration) { return static_cast<int>(msecDuration / static_cast<qlonglong>(60000)); }
-    /** remainingRealSecondsComponent is not an integer like the other "Component" functions, and is only used for the seconds and millisecond component calculations */
+    /**remainingRealSecondsComponent is not an integer like the other "Component" functions, and is only used for the seconds and millisecond component calculations */
     inline static qreal remainingRealSecondsComponent(qlonglong msecDuration) { return static_cast<qreal>(fmod(static_cast<qreal>(msecDuration),60000)); }
-    /** Returns the remaining seconds components for a duration specified in msec after accounting for the full minutes */
+    /**Returns the remaining seconds components for a duration specified in msec after accounting for the full minutes */
     inline static int remainingSecondsComponent(qlonglong msecDuration) { return static_cast<int>(remainingRealSecondsComponent(msecDuration) / 1000); }
-    /** Returns the remaining millisecond components for a duration specified in msec after accounting for the full minutes and seconds */
+    /**Returns the remaining millisecond components for a duration specified in msec after accounting for the full minutes and seconds */
     //inline static int remainingMillisecondsComponent(qlonglong msecDuration) { return static_cast<int>((remainingRealSecondsComponent(msecDuration) - static_cast<qreal>(remainingSecondsComponent(msecDuration))) * 1000); }
     inline static int remainingMillisecondsComponent(qlonglong msecDuration) { return static_cast<int>(fmod(static_cast<double>(remainingRealSecondsComponent(msecDuration)),1000) + 0.5); }
-    /** Takes a time in msec (representing either a duration of an offset) and returns a string representation of its constituate components (12 min, 14 s, 978 ms) */
+    /**Takes a time in msec (representing either a duration of an offset) and returns a string representation of its constituate components (12 min, 14 s, 978 ms) */
     inline static QString formatAsComponents(qlonglong msecDuration) { return tr("%1 min %2 s %3 ms").arg(minuteComponent(msecDuration)).arg(remainingSecondsComponent(msecDuration)).arg(remainingMillisecondsComponent(msecDuration)); }
 
 
@@ -72,33 +75,20 @@ public Q_SLOTS:
     /**Informs the dataPlayer to adjust the position to reflect the updated time frame.*/
     void slotVideoOffsetAndWindowUpdated(qlonglong startTime, qlonglong timeWindow);
 
-//    /**Informs the view to present the traces for an updated time frame.*/
-//    void slotStartSecondTimeUpdated(/*int start*/);
-
-//    /**Informs the view to present the traces for an updated time frame.*/
-//    void slotStartMilisecondTimeUpdated(/*int start*/);
-
-//    /**Update the selection widgets and informs view to present the traces for an updated time frame.*/
-//    void slotDurationUpdated();
-
-//    /**Update the selection widgets and informs view to present the traces for an updated time frame.*/
-//    void slotScrollBarUpdated();
-
-
 private:
+    /**Parses the file names and data directory names to determine the reletive times of the video/data files. */
     void parse();
 
     QString movieFileUrl;
     QString dataFileUrl;
 
+    /**The relative offset (positive or negative) from the start of the data file to the start of the video file*/
     qlonglong dataOffsetToVideoMSec = 0;
 
     /**Length of the recording in miliseconds.*/
     qlonglong dataDuration = 0;
     /**Length of the recording in miliseconds.*/
     qlonglong videoDuration = 0;
-
-
 
 };
 
