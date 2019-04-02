@@ -36,10 +36,6 @@ public:
         void setPosition(qlonglong position);
         void setPositionAndActiveWindow(qlonglong position, qlonglong activeWindow);
 
-        void getPositionFromDataFile();
-        void setDataFilePositionFromPosition();
-
-
     signals:
         void onPositionOrActiveWindowChanged(qint64 newPosition, qint64 newActiveWindow);
         //void onPositionChanged(qint64 newPosition);
@@ -62,8 +58,6 @@ public:
         QLabel *m_errorLabel;
         QLabel *m_positionLabel;
 
-        QAbstractButton *m_syncDataPositionFromVideoWindowButton;
-        QAbstractButton *m_syncVideoPositionFromDataWindowButton;
 
         QAbstractButton *m_stepForward;
         QLineEdit *m_stepSize;

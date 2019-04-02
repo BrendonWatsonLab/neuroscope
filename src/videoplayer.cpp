@@ -18,36 +18,31 @@ VideoPlayer::VideoPlayer(QWidget *parent) : QWidget(parent)
 
 	// Controls:
     QAbstractButton *openButton = new QPushButton(tr("Open..."));
+    openButton->setIcon(QPixmap(":/shared-icons/document-open"));
     connect(openButton, &QAbstractButton::clicked, this, &VideoPlayer::openFile);
 
+    // Play Button:
     m_playButton = new QPushButton;
     m_playButton->setEnabled(false);
     m_playButton->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
-
     connect(m_playButton, &QAbstractButton::clicked,
             this, &VideoPlayer::play);
 
+    // Slider
     m_positionSlider = new QSlider(Qt::Horizontal);
     m_positionSlider->setRange(0, 0);
-
     connect(m_positionSlider, &QAbstractSlider::sliderMoved,
             this, &VideoPlayer::setPosition);
 
-
+    // Position Text Label
     m_positionLabel = new QLabel;
-    m_positionLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    m_positionLabel->setText("-- / -- (-- min -- s -- ms");
+    m_positionLabel->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
 
-
-    m_syncDataPositionFromVideoWindowButton = new QPushButton(tr("Video --> Data"));
-    m_syncDataPositionFromVideoWindowButton->setEnabled(false);
-    connect(m_syncDataPositionFromVideoWindowButton, &QAbstractButton::clicked, this, &VideoPlayer::setDataFilePositionFromPosition);
-
-    m_syncVideoPositionFromDataWindowButton = new QPushButton(tr("Data --> Video"));
-    m_syncVideoPositionFromDataWindowButton->setEnabled(false);
-    connect(m_syncVideoPositionFromDataWindowButton, &QAbstractButton::clicked, this, &VideoPlayer::getPositionFromDataFile);
-
+    // Error label sits at the bottom and informs the user if there is an error loading/playing the video
     m_errorLabel = new QLabel;
-    m_errorLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum);
+    m_errorLabel->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Maximum);
+
 
 
     // Step Controls:
@@ -57,15 +52,13 @@ VideoPlayer::VideoPlayer(QWidget *parent) : QWidget(parent)
     m_stepForward->setIcon(style()->standardIcon(QStyle::SP_MediaSeekForward));
     connect(m_stepForward, &QAbstractButton::clicked,
             this, &VideoPlayer::stepForward);
-
-//    QShortcut *shortcutStepForward = new QShortcut(QKeySequence(Qt::Key_Right), parent);
-//    QObject::connect(shortcutStepForward, SIGNAL(activated()), this, SLOT(stepForward()));
     bindShortcut(m_stepForward, Qt::Key_Right);
 
     m_stepSize = new QLineEdit;
     m_stepSize->setText("1.0");
-    m_stepSize->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
+    m_stepSize->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Preferred);
     m_stepSize->setValidator( new QDoubleValidator(0, 100, 2, this) );
+    m_stepSize->setStatusTip("Amount to step (in seconds) when the left/right arrows are pressed.");
 
     // Step Backward:
     m_stepBackward = new QPushButton;
@@ -73,8 +66,6 @@ VideoPlayer::VideoPlayer(QWidget *parent) : QWidget(parent)
     m_stepBackward->setIcon(style()->standardIcon(QStyle::SP_MediaSeekBackward));
     connect(m_stepBackward, &QAbstractButton::clicked,
             this, &VideoPlayer::stepBackward);
-//    QShortcut *shortcutStepBackward = new QShortcut(QKeySequence(Qt::Key_Left), parent);
-//    QObject::connect(shortcutStepBackward, SIGNAL(activated()), this, SLOT(stepBackward()));
     bindShortcut(m_stepBackward, Qt::Key_Left);
 
 	// Layouts:
@@ -86,17 +77,21 @@ VideoPlayer::VideoPlayer(QWidget *parent) : QWidget(parent)
 
     QBoxLayout *secondaryControlsLayout = new QHBoxLayout;
     secondaryControlsLayout->setMargin(0);
-    secondaryControlsLayout->addWidget(openButton);
     secondaryControlsLayout->addWidget(m_positionLabel);
     secondaryControlsLayout->addWidget(m_stepBackward);
     secondaryControlsLayout->addWidget(m_stepSize);
     secondaryControlsLayout->addWidget(m_stepForward);
 
+    QBoxLayout *tertiaryControlsLayout = new QHBoxLayout;
+    tertiaryControlsLayout->setMargin(0);
+    tertiaryControlsLayout->addWidget(openButton);
+    tertiaryControlsLayout->addWidget(m_errorLabel);
+
     QBoxLayout *layout = new QVBoxLayout;
     layout->addWidget(videoWidget);
     layout->addLayout(controlLayout);
     layout->addLayout(secondaryControlsLayout);
-    layout->addWidget(m_errorLabel);
+    layout->addLayout(tertiaryControlsLayout);
 
     setLayout(layout);
 
@@ -118,19 +113,11 @@ VideoPlayer::~VideoPlayer()
 }
 
 
-void VideoPlayer::getPositionFromDataFile() {
-
-}
-
-void VideoPlayer::setDataFilePositionFromPosition() {
-
-}
-
 void VideoPlayer::openFile()
 {
     QFileDialog fileDialog(this);
     fileDialog.setAcceptMode(QFileDialog::AcceptOpen);
-    fileDialog.setWindowTitle(tr("Open Movie"));
+    fileDialog.setWindowTitle(tr("Open video file corresponding to the currently loaded data"));
     QStringList supportedMimeTypes = m_mediaPlayer->supportedMimeTypes();
 //    if (!supportedMimeTypes.isEmpty())
 //        fileDialog.setMimeTypeFilters(supportedMimeTypes);
@@ -139,7 +126,7 @@ void VideoPlayer::openFile()
     // Set the default directory to look for the movie in
     const QString directoryURL = QDir::currentPath();
     //const QString directoryURL = QStandardPaths::standardLocations(QStandardPaths::MoviesLocation).value(0, QDir::homePath());
-    fileDialog.setDirectory(directoryURL);
+    //fileDialog.setDirectory(directoryURL);
     if (fileDialog.exec() == QDialog::Accepted)
         setUrl(fileDialog.selectedUrls().constFirst());
 }
@@ -180,9 +167,17 @@ void VideoPlayer::stepForward() {
         qint64 currentPosition = this->m_mediaPlayer->position();
         // Position is in [msec]
         qint64 translatedOffset = static_cast<qint64>(parsedStepSize * 1000.0);
-
         qint64 updatedPosition = currentPosition + translatedOffset;
+        // Pause Video Playback
+        bool wasPlaying = (this->m_mediaPlayer->state() == QMediaPlayer::PlayingState);
+        if (wasPlaying) {
+            m_mediaPlayer->pause();
+        }
         this->setPosition(updatedPosition);
+        // Resume playing if we were doing so before.
+        if (wasPlaying) {
+            m_mediaPlayer->play();
+        }
     }
     else {
         this->m_stepSize->setText("1.0");
@@ -197,9 +192,17 @@ void VideoPlayer::stepBackward() {
         qint64 currentPosition = this->m_mediaPlayer->position();
         // Position is in [msec]
         qint64 translatedOffset = static_cast<qint64>(parsedStepSize * 1000.0);
-
-        qint64 updatedPosition = currentPosition + translatedOffset;
+        qint64 updatedPosition = currentPosition - translatedOffset;
+        // Pause Video Playback
+        bool wasPlaying = (this->m_mediaPlayer->state() == QMediaPlayer::PlayingState);
+        if (wasPlaying) {
+            m_mediaPlayer->pause();
+        }
         this->setPosition(updatedPosition);
+        // Resume playing if we were doing so before.
+        if (wasPlaying) {
+            m_mediaPlayer->play();
+        }
     }
     else {
         this->m_stepSize->setText("1.0");
@@ -233,12 +236,8 @@ void VideoPlayer::onMediaStatusChanged(QMediaPlayer::MediaStatus status) {
 void VideoPlayer::getMetaData() {
     // Get the list of keys there is metadata available for
     QStringList metadatalist = m_mediaPlayer->availableMetaData();
-
     // Get the size of the list
     int list_size = metadatalist.size();
-
-    //qDebug() << player->isMetaDataAvailable() << list_size;
-
     // Define variables to store metadata key and value
     QString metadata_key;
     QVariant var_data;
@@ -247,15 +246,10 @@ void VideoPlayer::getMetaData() {
     {
         // Get the key from the list
         metadata_key = metadatalist.at(indx);
-
         // Get the value for the key
         var_data = m_mediaPlayer->metaData(metadata_key);
-
         qDebug() << metadata_key << var_data.toString();
     }
-
-
-
 }
 
 bool VideoPlayer::hasValidVideo()
@@ -315,7 +309,6 @@ void VideoPlayer::printPlayableFileFormats()
         outputString.append(supportedMimeTypes.at(i));
         outputString.append(", ");
     }
-
     qInfo(qUtf8Printable(outputString));
 }
 
