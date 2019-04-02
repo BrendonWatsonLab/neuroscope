@@ -9,6 +9,7 @@ class QAbstractButton;
 class QSlider;
 class QLabel;
 class QUrl;
+class QLineEdit;
 
 class VideoPlayer : public QWidget
 {
@@ -29,6 +30,9 @@ public:
     public slots:
         void openFile();
         void play();
+        void stepForward();
+        void stepBackward();
+
         void setPosition(qlonglong position);
         void setPositionAndActiveWindow(qlonglong position, qlonglong activeWindow);
 
@@ -61,10 +65,15 @@ public:
         QAbstractButton *m_syncDataPositionFromVideoWindowButton;
         QAbstractButton *m_syncVideoPositionFromDataWindowButton;
 
+        QAbstractButton *m_stepForward;
+        QLineEdit *m_stepSize;
+        QAbstractButton *m_stepBackward;
+
         qreal videoFrameRate = 0;
         qint64 activeWindowDuration = 1000;
 
         void updatePositionDurationLabel();
+        void bindShortcut(QAbstractButton *button, const QKeySequence &shortcut);
 
 };
 

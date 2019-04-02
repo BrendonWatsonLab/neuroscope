@@ -8,6 +8,7 @@
 #include <qvideosurfaceformat.h>
 #include <QMediaMetaData>
 #include "DataMovieLinkInfo.h"
+#include <QShortcut>
 
 VideoPlayer::VideoPlayer(QWidget *parent) : QWidget(parent)
 {
@@ -48,6 +49,34 @@ VideoPlayer::VideoPlayer(QWidget *parent) : QWidget(parent)
     m_errorLabel = new QLabel;
     m_errorLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum);
 
+
+    // Step Controls:
+    // Step Forward:
+    m_stepForward = new QPushButton;
+    m_stepForward->setEnabled(false);
+    m_stepForward->setIcon(style()->standardIcon(QStyle::SP_MediaSeekForward));
+    connect(m_stepForward, &QAbstractButton::clicked,
+            this, &VideoPlayer::stepForward);
+
+//    QShortcut *shortcutStepForward = new QShortcut(QKeySequence(Qt::Key_Right), parent);
+//    QObject::connect(shortcutStepForward, SIGNAL(activated()), this, SLOT(stepForward()));
+    bindShortcut(m_stepForward, Qt::Key_Right);
+
+    m_stepSize = new QLineEdit;
+    m_stepSize->setText("1.0");
+    m_stepSize->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
+    m_stepSize->setValidator( new QDoubleValidator(0, 100, 2, this) );
+
+    // Step Backward:
+    m_stepBackward = new QPushButton;
+    m_stepBackward->setEnabled(false);
+    m_stepBackward->setIcon(style()->standardIcon(QStyle::SP_MediaSeekBackward));
+    connect(m_stepBackward, &QAbstractButton::clicked,
+            this, &VideoPlayer::stepBackward);
+//    QShortcut *shortcutStepBackward = new QShortcut(QKeySequence(Qt::Key_Left), parent);
+//    QObject::connect(shortcutStepBackward, SIGNAL(activated()), this, SLOT(stepBackward()));
+    bindShortcut(m_stepBackward, Qt::Key_Left);
+
 	// Layouts:
     QBoxLayout *controlLayout = new QHBoxLayout;
     controlLayout->setMargin(0);
@@ -59,9 +88,9 @@ VideoPlayer::VideoPlayer(QWidget *parent) : QWidget(parent)
     secondaryControlsLayout->setMargin(0);
     secondaryControlsLayout->addWidget(openButton);
     secondaryControlsLayout->addWidget(m_positionLabel);
-    secondaryControlsLayout->addWidget(m_syncDataPositionFromVideoWindowButton);
-    secondaryControlsLayout->addWidget(m_syncVideoPositionFromDataWindowButton);
-
+    secondaryControlsLayout->addWidget(m_stepBackward);
+    secondaryControlsLayout->addWidget(m_stepSize);
+    secondaryControlsLayout->addWidget(m_stepForward);
 
     QBoxLayout *layout = new QVBoxLayout;
     layout->addWidget(videoWidget);
@@ -127,6 +156,8 @@ void VideoPlayer::setUrl(const QUrl &url)
     setWindowFilePath(url.isLocalFile() ? url.toLocalFile() : QString());
     m_mediaPlayer->setMedia(url);
     m_playButton->setEnabled(true);
+    m_stepBackward->setEnabled(true);
+    m_stepForward->setEnabled(true);
 }
 
 void VideoPlayer::play()
@@ -138,6 +169,40 @@ void VideoPlayer::play()
     default:
         m_mediaPlayer->play();
         break;
+    }
+}
+
+void VideoPlayer::stepForward() {
+    QString stepSize = m_stepSize->text();
+    bool wasParseSuccess = false;
+    double parsedStepSize = stepSize.toDouble(&wasParseSuccess);
+    if (wasParseSuccess) {
+        qint64 currentPosition = this->m_mediaPlayer->position();
+        // Position is in [msec]
+        qint64 translatedOffset = static_cast<qint64>(parsedStepSize * 1000.0);
+
+        qint64 updatedPosition = currentPosition + translatedOffset;
+        this->setPosition(updatedPosition);
+    }
+    else {
+        this->m_stepSize->setText("1.0");
+    }
+}
+
+void VideoPlayer::stepBackward() {
+    QString stepSize = m_stepSize->text();
+    bool wasParseSuccess = false;
+    double parsedStepSize = stepSize.toDouble(&wasParseSuccess);
+    if (wasParseSuccess) {
+        qint64 currentPosition = this->m_mediaPlayer->position();
+        // Position is in [msec]
+        qint64 translatedOffset = static_cast<qint64>(parsedStepSize * 1000.0);
+
+        qint64 updatedPosition = currentPosition + translatedOffset;
+        this->setPosition(updatedPosition);
+    }
+    else {
+        this->m_stepSize->setText("1.0");
     }
 }
 
@@ -211,7 +276,12 @@ bool VideoPlayer::hasValidVideo()
 //** This occurs when position is changed due to media playback (via the play button) or something similar */
 void VideoPlayer::positionChanged(qint64 position)
 {
-    m_positionSlider->setValue(position);
+    // If the slider value differs from the media player position, we know the slider is out of date
+    bool positionChanged = (position != m_positionSlider->value());
+    if (positionChanged) {
+        m_positionSlider->setValue(position);
+        //emit onPositionOrActiveWindowChanged(position, this->activeWindowDuration);
+    }
     this->updatePositionDurationLabel();
 }
 
@@ -289,6 +359,8 @@ void VideoPlayer::updatePositionDurationLabel() {
 void VideoPlayer::handleError()
 {
     m_playButton->setEnabled(false);
+    m_stepBackward->setEnabled(false);
+    m_stepForward->setEnabled(false);
     const QString errorString = m_mediaPlayer->errorString();
     QString message = "Error: ";
     if (errorString.isEmpty())
@@ -298,3 +370,11 @@ void VideoPlayer::handleError()
 
     m_errorLabel->setText(message);
 }
+
+
+// I have this function in my 'utils' module.
+void VideoPlayer::bindShortcut(QAbstractButton *button, const QKeySequence &shortcut)
+{
+    QObject::connect(new QShortcut(shortcut, button), &QShortcut::activated, [button](){ button->animateClick(); });
+}
+
