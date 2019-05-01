@@ -1124,7 +1124,9 @@ void EventsProvider::removeEvent(int selectedEventId,double time){
     }
 }
 
-void EventsProvider::addEvent(const QString &eventDescriptionToAdd, double time){
+void EventsProvider::addEvent(const QString &eventDescriptionToAdd, double time) {
+     qDebug() << "addEvent called:" << eventDescriptionToAdd;
+
     modified = true;
 
     //Clear the redo variables

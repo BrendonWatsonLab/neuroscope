@@ -176,6 +176,11 @@ const QString& NeuroscopeDoc::url() const
     return docUrl;
 }
 
+QString NeuroscopeDoc::parentFolderUrl() const
+{
+    return QFileInfo(this->url()).dir().absolutePath();
+}
+
 QString NeuroscopeDoc::sessionPath() const
 {
     return QFileInfo(sessionUrl).absoluteFilePath();

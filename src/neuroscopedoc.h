@@ -151,6 +151,8 @@ public:
     /**Returns the QString of the document. */
     const QString& url() const;
 
+    /**Returns the QString containing the path of the parent folder containing the document. */
+    QString parentFolderUrl() const;
 
     /**Changes the color of a channel.
     * @param channelId id of the channel to redraw.

@@ -1457,15 +1457,30 @@ void NeuroscopeApp::slotLoadPositionFile(){
 void NeuroscopeApp::slotCreateEventFile(){
     slotStatusMsg(tr("Creating an event file..."));
     const QString& docUrl = doc->url();
+    const QString& parentFolderUrl = doc->parentFolderUrl();
+
     const QString baseName = doc->documentBaseName();
-    const QString eventUrl = docUrl  +QDir::separator() + baseName;
+
+    const QString eventFileName = baseName + ".evt";
+
+    //const QString eventUrl = docUrl  + QDir::separator() + baseName;
+    const QString eventUrl = parentFolderUrl + QDir::separator() + eventFileName;
 
     QFileDialog dialog(this,tr("CreateEvent"),eventUrl,tr("Event file (*.evt, *.evt.*)"));
     dialog.setWindowTitle(tr("Create Event File as..."));
-    if(!dialog.exec())
-        return;
+    dialog.setDefaultSuffix(".evt");
+    const QUrl saveFileUrl = dialog.getSaveFileUrl(this,tr("CreateEvent"), eventUrl, tr("Event file (*.evt, *.evt.*)"));
 
-    const QString url = dialog.selectedFiles().first();
+    if (saveFileUrl.isEmpty()) {
+        return;
+    }
+
+    //dialog.getSaveFileName(this, caption, preferredName, filter);
+//    if(!dialog.exec())
+//        return;
+
+    //const QString url = dialog.selectedFiles().first();
+    const QString url = saveFileUrl.toString();
 
     if(!url.isEmpty()){
         //Check if the file already exist
