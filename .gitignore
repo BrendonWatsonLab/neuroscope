@@ -2,3 +2,4 @@
 *.moc*
 Makefile
 build
+build-debug
