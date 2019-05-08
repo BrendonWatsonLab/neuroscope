@@ -782,10 +782,12 @@ bool NeuroscopeDoc::saveEventFiles(){
     QMap<QString,QString>::ConstIterator iterator;
     for(iterator = providerUrls.constBegin(); iterator != providerUrls.constEnd(); ++iterator){
         DataProvider* provider = providers[iterator.key()];
+        // Try to see if the provider is an event provider by casting
         if(qobject_cast<EventsProvider*>(provider)){
             EventsProvider* eventProvider = static_cast<EventsProvider*>(provider);
             if(eventProvider->isModified()){
-                QFile eventFile(iterator.value());
+                QUrl eventFileUrl(iterator.value());
+                QFile eventFile(eventFileUrl.toLocalFile());
                 const bool status = eventFile.open(QIODevice::WriteOnly);
                 if(!status)
                     return false;
