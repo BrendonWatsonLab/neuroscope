@@ -2553,7 +2553,7 @@ NeuroscopeDoc::OpenSaveCreateReturnMessage NeuroscopeDoc::loadEventFileForSessio
     EventsProvider* eventsProvider = new EventsProvider(eventUrl,samplingRate,eventPosition);
     QString name = eventsProvider->getName();
 
-    //The name should be of 3 characters length with at least one none digit character.
+    //The name should be of 3 characters length with at least one non-digit character.
     if(name.length() != 3 || name.contains(QRegExp("\\d{3}"))){
         delete eventsProvider;
         QApplication::restoreOverrideCursor();
@@ -2591,7 +2591,7 @@ NeuroscopeDoc::OpenSaveCreateReturnMessage NeuroscopeDoc::loadEventFileForSessio
     lastLoadedProvider = name;
     lastEventProviderGridX = eventsProvider->getDescriptionLength();
 
-    //Buil the eventColors
+    //Build the eventColors
     ItemColors* eventColors = new ItemColors();
     QMap<EventDescription,int> eventMap = eventsProvider->eventDescriptionIdMap();
     //if possible, use the data from the session file to build the eventColorList.
